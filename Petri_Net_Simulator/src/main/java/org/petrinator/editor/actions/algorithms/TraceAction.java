@@ -10,6 +10,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class TraceAction extends JMenu {
 
@@ -18,6 +20,7 @@ public class TraceAction extends JMenu {
     private static final String MODULE_NAME = "Trace export";
 
     private static String defaultLogDirectory = System.getProperty("user.home") + "/logs";
+    private static String defaultLogPath = defaultLogDirectory + "/transitions.txt";
     private AbstractAction export_trace;
     private AbstractAction clean_file;
 
@@ -31,11 +34,25 @@ public class TraceAction extends JMenu {
         createSubMenu();
     }
 
-
+    private JMenuItem createFileRemover(){
+        JMenuItem deleteTraceLog = new JMenuItem("Delete Trace Log");
+        deleteTraceLog.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                try {
+                    Files.deleteIfExists(Paths.get(defaultLogPath));
+                } catch (IOException ioException) {
+                    ioException.printStackTrace();
+                }
+            }
+        });
+        return deleteTraceLog;
+    }
 
     private void createSubMenu()
     {
         this.add(new ExportTrace());
+        this.add(createFileRemover());
     }
 
     private class ExportTrace extends JMenuItem{
@@ -45,36 +62,35 @@ public class TraceAction extends JMenu {
 
         public ExportTrace(){
             super("Export Trace");
-            createWriter();
             this.setName("Export Trace");
             this.setIcon(new ImageIcon("pneditor/trace_export16.png"));
             this.addActionListener(new ActionListener() {
                 @Override
                 public void actionPerformed(ActionEvent e) {
                     try {
+                        createWriter();
                         String transitionBuffer = SimulateAction.get_transitionBuffer();
-                        writer.print(transitionBuffer); //Escribe los datos
-                        writer.flush(); //El escritor cada vez que se cierra el txt se escribe sobre el mismo
+                        writer.append(transitionBuffer);
+                        writer.flush();
                         SimulateAction.clean_transitionBuffer();
+                        writer.close();
+                        file.close();
                     }catch(Exception err){
                         err.printStackTrace();
                     }
+
                 }
             });
         }
-        private void createWriter()
-        {
+        private void createWriter() throws IOException {
             File dir = new File(defaultLogDirectory);
             if(!dir.exists()){
                 dir.mkdirs();
             }
             file = null;
-            try {
-                file = new FileWriter(defaultLogDirectory + "/transitions.txt");
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            file = new FileWriter(defaultLogPath, true);
             writer = new PrintWriter(file);
+
         }
     }
 

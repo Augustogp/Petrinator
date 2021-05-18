@@ -6,11 +6,10 @@ import org.petrinator.editor.actions.SimulateAction;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.ServerSocket;
+import java.net.Socket;
+import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -22,9 +21,12 @@ public class TraceAction extends JMenu {
 
     private static String defaultLogDirectory = System.getProperty("user.home") + "/logs";
     private static String defaultLogPath = defaultLogDirectory + "/transitions.txt";
+    private static String defaultModulesPath = System.getProperty("user.dir") + "\\Petri_Net_Simulator\\Modulos\\Politics-generator";
     private AbstractAction export_trace;
     private AbstractAction clean_file;
     private ServerSocket sock_server;
+    DataOutputStream out_stream = null;
+    DataInputStream in_stream = null;
 
 
     public TraceAction(Root root){
@@ -33,7 +35,7 @@ public class TraceAction extends JMenu {
         this.setIcon(icon);
         this.setName(MODULE_NAME);
         this.root = root;
-      //  createSocket();
+       // createSocket();
         createSubMenu();
     }
 
@@ -51,7 +53,18 @@ public class TraceAction extends JMenu {
         });
         return deleteTraceLog;
     }
-/*
+
+    private JMenuItem createStartComunnication(){
+        JMenuItem startComunnication = new JMenuItem("Start Python Script");
+        startComunnication.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                createSocket();
+            }
+        });
+        return startComunnication;
+    }
+
     private void createSocket(){
         int port_server = 0;
         Socket sock_cli = null;
@@ -62,14 +75,49 @@ public class TraceAction extends JMenu {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        //        System.out.println("Path del jar " + get_Current_JarPath());
 
+        System.out.println("Path del modulo es " + defaultModulesPath);
+        String pathToPythonMain = defaultModulesPath + "/main_politics.py";
+        System.out.println("Path del python " + pathToPythonMain);
 
+        ProcessBuilder pb = new ProcessBuilder("python", pathToPythonMain, String.valueOf(port_server), SimulateAction.get_transitionBuffer());
+        try {
+            pb.start();
+
+            //Blocking accept executed python client
+            sock_cli = sock_server.accept();
+            out_stream = new DataOutputStream(sock_cli.getOutputStream());
+            in_stream = new DataInputStream(sock_cli.getInputStream());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        return;
     }
-*/
+
+    public String get_Current_JarPath()
+    {
+        String pathNet = SupervisionAction.class.getProtectionDomain().getCodeSource().getLocation().getPath();
+        pathNet = pathNet.substring(0, pathNet.lastIndexOf("/"));
+        if (System.getProperty("os.name").startsWith("Windows") && pathNet.startsWith("/"))
+            pathNet = pathNet.substring(1, pathNet.length());
+        String decodedPath = null;
+        try {
+            decodedPath = URLDecoder.decode(pathNet, "UTF-8");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        //System.out.println("Jar path : " + decodedPath);
+        return decodedPath;
+    }
+
     private void createSubMenu()
     {
         this.add(new ExportTrace());
         this.add(createFileRemover());
+        this.add(createStartComunnication());
     }
 
     private class ExportTrace extends JMenuItem{

@@ -194,7 +194,7 @@ public class SupervisionAction extends AbstractAction
             if(jar_path!= null)pathToPythonMain = jar_path +"/Modulos/Deadlock-supervisor/tesis.py";
             else return 1;
 
-            ProcessBuilder pb = new ProcessBuilder("python3", pathToPythonMain,String.valueOf(port), root.getCurrentFile().getPath(),jar_path);
+            ProcessBuilder pb = new ProcessBuilder("python3", pathToPythonMain,String.valueOf(port), jar_path);
             pb.start();
             System.out.println("python3 '" + pathToPythonMain + "' "+ String.valueOf(port) + " '" + root.getCurrentFile().getPath() + "'");
 

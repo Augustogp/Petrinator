@@ -12,7 +12,7 @@
                     <text>1</text>
                 </initialMarking>
                 <graphics>
-                    <position x="16" y="16"/>
+                    <position x="16" y="168"/>
                 </graphics>
             </place>
             <place id="P2">
@@ -26,7 +26,7 @@
                     <text>0</text>
                 </initialMarking>
                 <graphics>
-                    <position x="393" y="121"/>
+                    <position x="676" y="167"/>
                 </graphics>
             </place>
             <transition id="T1">
@@ -43,7 +43,7 @@
                     </graphics>
                 </name>
                 <graphics>
-                    <position x="123" y="262"/>
+                    <position x="357" y="16"/>
                 </graphics>
             </transition>
             <transition id="T2">
@@ -60,10 +60,10 @@
                     </graphics>
                 </name>
                 <graphics>
-                    <position x="201" y="21"/>
+                    <position x="323" y="428"/>
                 </graphics>
             </transition>
-            <arc id="AT1P1" source="T1" target="P1">
+            <arc id="AT2P1" source="T2" target="P1">
                 <inscription>
                     <text>1</text>
                     <graphics>
@@ -72,7 +72,7 @@
                 </inscription>
                 <type value="regular"/>
             </arc>
-            <arc id="AP2T1" source="P2" target="T1">
+            <arc id="AP2T2" source="P2" target="T2">
                 <inscription>
                     <text>1</text>
                     <graphics>
@@ -81,7 +81,7 @@
                 </inscription>
                 <type value="regular"/>
             </arc>
-            <arc id="AT2P2" source="T2" target="P2">
+            <arc id="AT1P2" source="T1" target="P2">
                 <inscription>
                     <text>1</text>
                     <graphics>
@@ -90,7 +90,7 @@
                 </inscription>
                 <type value="regular"/>
             </arc>
-            <arc id="AP1T2" source="P1" target="T2">
+            <arc id="AP1T1" source="P1" target="T1">
                 <inscription>
                     <text>1</text>
                     <graphics>

@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.net.ServerSocket;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -23,6 +24,7 @@ public class TraceAction extends JMenu {
     private static String defaultLogPath = defaultLogDirectory + "/transitions.txt";
     private AbstractAction export_trace;
     private AbstractAction clean_file;
+    private ServerSocket sock_server;
 
 
     public TraceAction(Root root){
@@ -31,6 +33,7 @@ public class TraceAction extends JMenu {
         this.setIcon(icon);
         this.setName(MODULE_NAME);
         this.root = root;
+      //  createSocket();
         createSubMenu();
     }
 
@@ -48,7 +51,21 @@ public class TraceAction extends JMenu {
         });
         return deleteTraceLog;
     }
+/*
+    private void createSocket(){
+        int port_server = 0;
+        Socket sock_cli = null;
 
+        try {
+            sock_server = new ServerSocket(0);
+            port_server = sock_server.getLocalPort();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+*/
     private void createSubMenu()
     {
         this.add(new ExportTrace());
@@ -88,7 +105,7 @@ public class TraceAction extends JMenu {
                 dir.mkdirs();
             }
             file = null;
-            file = new FileWriter(defaultLogPath, true);
+            file = new FileWriter(defaultLogPath, true  );
             writer = new PrintWriter(file);
 
         }

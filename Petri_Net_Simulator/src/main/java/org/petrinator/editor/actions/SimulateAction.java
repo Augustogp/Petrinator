@@ -470,7 +470,7 @@ public class SimulateAction extends AbstractAction
 
             if(!skipGraphicalFire) {
                 root.getEventList().addEvent((transition.getLabel() + " was fired!"));
-                transitionsBuffer = transitionsBuffer + transition.getLabel() + "\n";
+                transitionsBuffer = transitionsBuffer + transition.getLabel() + ",";
             }
 
             if(transition.isTimed())

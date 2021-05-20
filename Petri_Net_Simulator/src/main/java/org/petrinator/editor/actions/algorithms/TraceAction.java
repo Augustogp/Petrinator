@@ -1,7 +1,9 @@
 package org.petrinator.editor.actions.algorithms;
 
+import com.google.gson.Gson;
 import org.petrinator.editor.Root;
 import org.petrinator.editor.actions.SimulateAction;
+import org.petrinator.petrinet.Marking;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;
@@ -12,6 +14,8 @@ import java.net.Socket;
 import java.net.URLDecoder;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TraceAction extends JMenu {
 
@@ -65,6 +69,25 @@ public class TraceAction extends JMenu {
         return startComunnication;
     }
 
+    private void redirectOutput(Process process) throws IOException {
+        BufferedReader reader =
+                new BufferedReader(new InputStreamReader(process.getInputStream()));
+        StringBuilder builder = new StringBuilder();
+        String line = null;
+        while ( (line = reader.readLine()) != null) {
+            builder.append(line);
+            builder.append(System.getProperty("line.separator"));
+        }
+        reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+        line = null;
+        while ( (line = reader.readLine()) != null) {
+            builder.append(line);
+            builder.append(System.getProperty("line.separator"));
+        }
+        String result = builder.toString();
+        System.out.println("Resultados Python: " + result);
+    }
+
     private void createSocket(){
         int port_server = 0;
         Socket sock_cli = null;
@@ -81,12 +104,15 @@ public class TraceAction extends JMenu {
         String pathToPythonMain = defaultModulesPath + "/main_politics.py";
         System.out.println("Path del python " + pathToPythonMain);
 
-        ProcessBuilder pb = new ProcessBuilder("python", pathToPythonMain, String.valueOf(port_server), SimulateAction.get_transitionBuffer());
+        ProcessBuilder pb = new ProcessBuilder("python", pathToPythonMain, String.valueOf(port_server), SimulateAction.get_transitionBuffer(),generateJson());
+        System.out.println("python" + pathToPythonMain + String.valueOf(port_server) + SimulateAction.get_transitionBuffer() + generateJson());
         try {
-            pb.start();
+            Process process = pb.start();
 
             //Blocking accept executed python client
             sock_cli = sock_server.accept();
+           // redirectOutput(process); //Print stdout and stderr of python in java
+
             out_stream = new DataOutputStream(sock_cli.getOutputStream());
             in_stream = new DataInputStream(sock_cli.getInputStream());
         } catch (IOException e) {
@@ -111,6 +137,21 @@ public class TraceAction extends JMenu {
         }
         //System.out.println("Jar path : " + decodedPath);
         return decodedPath;
+    }
+
+    private String generateJson(){
+        Map<String, Object> matrices = new HashMap<>();
+
+        Gson gson = new Gson();
+
+        matrices.put("I-", root.getDocument().getPetriNet().getBackwardsIMatrix());
+        matrices.put("I+", root.getDocument().getPetriNet().getForwardIMatrix());
+        matrices.put("Incidencia", root.getDocument().getPetriNet().getIncidenceMatrix());
+        matrices.put("Inhibicion", root.getDocument().getPetriNet().getInhibitionMatrix());
+        matrices.put("Marcado", root.getDocument().getPetriNet().getInitialMarking().getMarkingAsArray()[Marking.CURRENT]);
+
+        String json = gson.toJson(matrices);
+        return json.replace("\"", "\\\"");
     }
 
     private void createSubMenu()

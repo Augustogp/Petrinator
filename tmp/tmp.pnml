@@ -12,7 +12,7 @@
                     <text>1</text>
                 </initialMarking>
                 <graphics>
-                    <position x="16" y="16"/>
+                    <position x="16" y="33"/>
                 </graphics>
             </place>
             <place id="P2">
@@ -26,7 +26,7 @@
                     <text>0</text>
                 </initialMarking>
                 <graphics>
-                    <position x="192" y="109"/>
+                    <position x="294" y="103"/>
                 </graphics>
             </place>
             <transition id="T1">
@@ -43,7 +43,7 @@
                     </graphics>
                 </name>
                 <graphics>
-                    <position x="150" y="37"/>
+                    <position x="132" y="16"/>
                 </graphics>
             </transition>
             <transition id="T2">
@@ -60,7 +60,7 @@
                     </graphics>
                 </name>
                 <graphics>
-                    <position x="58" y="105"/>
+                    <position x="98" y="165"/>
                 </graphics>
             </transition>
             <arc id="AT2P1" source="T2" target="P1">

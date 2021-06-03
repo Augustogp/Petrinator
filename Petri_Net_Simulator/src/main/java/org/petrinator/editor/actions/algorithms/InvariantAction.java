@@ -340,7 +340,7 @@ public class InvariantAction extends AbstractAction
      * @param c The matrix to transform.
      * @return A matrix containing the vectors.
      */
-    private Matrix findVectors(Matrix c)
+    public Matrix findVectors(Matrix c)
     {
         /*
        | Tests Invariant Analysis IModule

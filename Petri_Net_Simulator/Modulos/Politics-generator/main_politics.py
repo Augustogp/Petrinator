@@ -15,15 +15,13 @@ traces_log2 = sys.argv[2]
 
 json_matrices2 = str(sys.argv[3])
 
+json_traces = str(sys.argv[4])
+
 defaultLogPath = os.path.expanduser("~") + r"\logs\transitions.txt"
 currentDirectory = os.getcwd()
 matrix_structure_files = currentDirectory.rsplit("\\",3)[0]
 
 def main():
-    #traces_log = open(defaultLogPath,"r")
-   # print(defaultLogPath)
-   # print(traces_log.read())
-   # traces_log.close()
     
     print("traces_string " + traces_log2)
     print("json_matrices2 " + json_matrices2)
@@ -40,11 +38,14 @@ def main():
     print("Matriz I +")
     print(matrix_i_plus)
     matrix_i_minus = matrices["I-"]
-    print("Matriz I -"]
+    print("Matriz I -")
     print(matrix_i_minus)
     matrix_inhibition = matrices["Inhibicion"]
-    print("Matriz Inhibicion"]
+    print("Matriz Inhibicion")
     print(matrix_inhibition)
+    tInvTraces = json.loads(json_traces)
+    for key in tInvTraces:
+        print(key , tInvTraces[key]) 
     
     
 main()

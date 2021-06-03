@@ -9,10 +9,10 @@
                     </graphics>
                 </name>
                 <initialMarking>
-                    <text>1</text>
+                    <text>0</text>
                 </initialMarking>
                 <graphics>
-                    <position x="16" y="33"/>
+                    <position x="16" y="43"/>
                 </graphics>
             </place>
             <place id="P2">
@@ -26,7 +26,77 @@
                     <text>0</text>
                 </initialMarking>
                 <graphics>
-                    <position x="294" y="103"/>
+                    <position x="234" y="65"/>
+                </graphics>
+            </place>
+            <place id="P3">
+                <name>
+                    <text>P3</text>
+                    <graphics>
+                        <offset x="5" y="33"/>
+                    </graphics>
+                </name>
+                <initialMarking>
+                    <text>1</text>
+                </initialMarking>
+                <graphics>
+                    <position x="550" y="16"/>
+                </graphics>
+            </place>
+            <place id="P4">
+                <name>
+                    <text>P4</text>
+                    <graphics>
+                        <offset x="5" y="33"/>
+                    </graphics>
+                </name>
+                <initialMarking>
+                    <text>0</text>
+                </initialMarking>
+                <graphics>
+                    <position x="511" y="186"/>
+                </graphics>
+            </place>
+            <place id="P5">
+                <name>
+                    <text>P5</text>
+                    <graphics>
+                        <offset x="5" y="33"/>
+                    </graphics>
+                </name>
+                <initialMarking>
+                    <text>0</text>
+                </initialMarking>
+                <graphics>
+                    <position x="626" y="285"/>
+                </graphics>
+            </place>
+            <place id="P6">
+                <name>
+                    <text>P6</text>
+                    <graphics>
+                        <offset x="5" y="33"/>
+                    </graphics>
+                </name>
+                <initialMarking>
+                    <text>0</text>
+                </initialMarking>
+                <graphics>
+                    <position x="451" y="335"/>
+                </graphics>
+            </place>
+            <place id="P7">
+                <name>
+                    <text>P7</text>
+                    <graphics>
+                        <offset x="5" y="33"/>
+                    </graphics>
+                </name>
+                <initialMarking>
+                    <text>0</text>
+                </initialMarking>
+                <graphics>
+                    <position x="816" y="539"/>
                 </graphics>
             </place>
             <transition id="T1">
@@ -43,7 +113,7 @@
                     </graphics>
                 </name>
                 <graphics>
-                    <position x="132" y="16"/>
+                    <position x="118" y="67"/>
                 </graphics>
             </transition>
             <transition id="T2">
@@ -60,10 +130,129 @@
                     </graphics>
                 </name>
                 <graphics>
-                    <position x="98" y="165"/>
+                    <position x="369" y="47"/>
                 </graphics>
             </transition>
-            <arc id="AT2P1" source="T2" target="P1">
+            <transition id="T3">
+                <label>
+                    <text>&lt;F,I,(!none)&gt;</text>
+                    <graphics>
+                        <offset x="-10" y="0"/>
+                    </graphics>
+                </label>
+                <name>
+                    <text>T3</text>
+                    <graphics>
+                        <offset x="4" y="31"/>
+                    </graphics>
+                </name>
+                <graphics>
+                    <position x="449" y="247"/>
+                </graphics>
+            </transition>
+            <transition id="T4">
+                <label>
+                    <text>&lt;F,I,(!none)&gt;</text>
+                    <graphics>
+                        <offset x="-10" y="0"/>
+                    </graphics>
+                </label>
+                <name>
+                    <text>T4</text>
+                    <graphics>
+                        <offset x="4" y="31"/>
+                    </graphics>
+                </name>
+                <graphics>
+                    <position x="573" y="242"/>
+                </graphics>
+            </transition>
+            <transition id="T5">
+                <label>
+                    <text>&lt;F,I,(!none)&gt;</text>
+                    <graphics>
+                        <offset x="-10" y="0"/>
+                    </graphics>
+                </label>
+                <name>
+                    <text>T5</text>
+                    <graphics>
+                        <offset x="4" y="31"/>
+                    </graphics>
+                </name>
+                <graphics>
+                    <position x="826" y="216"/>
+                </graphics>
+            </transition>
+            <transition id="T6">
+                <label>
+                    <text>&lt;F,I,(!none)&gt;</text>
+                    <graphics>
+                        <offset x="-10" y="0"/>
+                    </graphics>
+                </label>
+                <name>
+                    <text>T6</text>
+                    <graphics>
+                        <offset x="4" y="31"/>
+                    </graphics>
+                </name>
+                <graphics>
+                    <position x="213" y="526"/>
+                </graphics>
+            </transition>
+            <transition id="T7">
+                <label>
+                    <text>&lt;F,I,(!none)&gt;</text>
+                    <graphics>
+                        <offset x="-10" y="0"/>
+                    </graphics>
+                </label>
+                <name>
+                    <text>T7</text>
+                    <graphics>
+                        <offset x="4" y="31"/>
+                    </graphics>
+                </name>
+                <graphics>
+                    <position x="368" y="425"/>
+                </graphics>
+            </transition>
+            <transition id="T8">
+                <label>
+                    <text>&lt;F,I,(!none)&gt;</text>
+                    <graphics>
+                        <offset x="-10" y="0"/>
+                    </graphics>
+                </label>
+                <name>
+                    <text>T8</text>
+                    <graphics>
+                        <offset x="4" y="31"/>
+                    </graphics>
+                </name>
+                <graphics>
+                    <position x="644" y="451"/>
+                </graphics>
+            </transition>
+            <transition id="T9">
+                <label>
+                    <text>&lt;F,I,(!none)&gt;</text>
+                    <graphics>
+                        <offset x="-10" y="0"/>
+                    </graphics>
+                </label>
+                <name>
+                    <text>T9</text>
+                    <graphics>
+                        <offset x="4" y="31"/>
+                    </graphics>
+                </name>
+                <graphics>
+                    <position x="335" y="145"/>
+                </graphics>
+            </transition>
+            <arc id="A" source="P1" target="T1">
                 <inscription>
                     <text>1</text>
                     <graphics>
@@ -72,7 +261,7 @@
                 </inscription>
                 <type value="regular"/>
             </arc>
-            <arc id="AP2T2" source="P2" target="T2">
+            <arc id="A" source="T1" target="P2">
                 <inscription>
                     <text>1</text>
                     <graphics>
@@ -81,7 +270,7 @@
                 </inscription>
                 <type value="regular"/>
             </arc>
-            <arc id="AT1P2" source="T1" target="P2">
+            <arc id="A" source="P2" target="T2">
                 <inscription>
                     <text>1</text>
                     <graphics>
@@ -90,7 +279,133 @@
                 </inscription>
                 <type value="regular"/>
             </arc>
-            <arc id="AP1T1" source="P1" target="T1">
+            <arc id="A" source="T2" target="P3">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="P4" target="T3">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="P3" target="T5">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="P4" target="T4">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="T4" target="P5">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="P5" target="T8">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="T3" target="P6">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="P6" target="T7">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="T5" target="P7">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="P7" target="T6">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="T6" target="P1">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="T7" target="P1">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="T8" target="P1">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="P2" target="T9">
+                <inscription>
+                    <text>1</text>
+                    <graphics>
+                        <offset x="4" y="-7"/>
+                    </graphics>
+                </inscription>
+                <type value="regular"/>
+            </arc>
+            <arc id="A" source="T9" target="P4">
                 <inscription>
                     <text>1</text>
                     <graphics>

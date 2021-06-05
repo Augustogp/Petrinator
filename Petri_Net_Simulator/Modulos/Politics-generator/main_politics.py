@@ -4,6 +4,7 @@ import json
 import socket
 import sys
 import traceback
+import random
 
 #socket
 host = "127.0.0.1"
@@ -44,8 +45,22 @@ def main():
     print("Matriz Inhibicion")
     print(matrix_inhibition)
     tInvTraces = json.loads(json_traces)
-    for key in tInvTraces:
-        print(key , tInvTraces[key]) 
+    num_transitions = len(matrix_i[0])
     
+    transitions_weight = {}
+    for i in range(1,num_transitions+1):
+        transitions_weight["T%d" %(i)] = random.randint(0,10)
+    print(transitions_weight)
+    
+    print(tInvTraces)
+    tinv_weights = {}
+    for key in tInvTraces:
+       tinv_weights[key] = 0;
+    for key in tinv_weights:
+        for i in range(1,num_transitions+1):
+            if i in tInvTraces[key]:
+                tinv_weights[key] += transitions_weight["T%d" %(i)]
+    print(tinv_weights)
+
     
 main()

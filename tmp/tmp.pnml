@@ -9,7 +9,7 @@
                     </graphics>
                 </name>
                 <initialMarking>
-                    <text>0</text>
+                    <text>1</text>
                 </initialMarking>
                 <graphics>
                     <position x="16" y="43"/>
@@ -37,7 +37,7 @@
                     </graphics>
                 </name>
                 <initialMarking>
-                    <text>1</text>
+                    <text>0</text>
                 </initialMarking>
                 <graphics>
                     <position x="550" y="16"/>

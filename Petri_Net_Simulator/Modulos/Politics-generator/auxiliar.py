@@ -6,6 +6,7 @@ import sys
 import traceback
 import random
 from agent import Agent
+from enviroment import Environment
 
 
 
@@ -32,12 +33,19 @@ def main():
     matrix_inhibition = matrices["Inhibicion"]
     print("Matriz Inhibicion")
     print(matrix_inhibition)
+    marking = matrices["Marcado"]
+    print("Marcado")
+    print(marking)
     
 
-    agent = Agent(matrix_i_minus)
+    enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking)
+    agent = Agent(matrix_i_minus,enviroment)
     #agent.print_policy()
+    print("Policies:")
     print(agent.get_policy())
+    print("Action space:")
     print(agent.action_space)
+    print(enviroment.map_p_to_conflicts)
 
 
     

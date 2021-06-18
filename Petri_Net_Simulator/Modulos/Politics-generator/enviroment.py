@@ -4,7 +4,7 @@ import numpy as np
 
 class Environment:
     
-    def __init__(self, I_minus, I_plus, Inhibition, Marking):
+    def __init__(self, I_minus, I_plus, Inhibition, Marking,cost_vector):
         
         self.action_space = range(len(I_minus))
         
@@ -27,6 +27,11 @@ class Environment:
         self.I_minus = np.array(I_minus)
         self.I_plus = np.array(I_plus)
         self.initial_marking = np.array(Marking)
+
+        self.cost_vector = cost_vector
+        self.mean_cost = 0
+        self.historic_costs = []
+        self.beta = 0
         
         self.createVarEcuExt()
 
@@ -34,6 +39,9 @@ class Environment:
         print("h:")
         print(self.H_transposed)
         #self.score = 0
+
+    def reset(self):
+        self.marking = self.initial_marking
                 
     def createVarEcuExt(self):
         self.createQ()
@@ -91,10 +99,24 @@ class Environment:
         print(self.Ext)
 
     def fireNet(self,transition):
+        print("Se dispara %d" %(transition))
         fireVector = self.createFiringVector(transition)
         self.marking = self.marking - np.dot(self.I_minus,fireVector)
         self.marking = self.marking + np.dot(self.I_plus,fireVector)
         self.createVarEcuExt()
+        return self.updateCost(transition)
+
+    def updateCost(self,transition):
+        self.historic_costs.append(self.cost_vector[transition])
+        reward = (self.cost_vector[transition] - self.mean_cost) / 100
+        self.mean_cost = self.mean_cost + (self.cost_vector[transition] - self.mean_cost) / len(self.historic_costs)
+        beta = int(not(self.cost_vector[transition] < self.mean_cost))
+        return reward
+
+
+    def step(self,transition):
+        self.fireNet(transition)
+        #Metemos las n expresiones regulares, una por cada t inv
 
     def getExt(self):
         return self.Ext
@@ -115,6 +137,13 @@ class Environment:
                 default_prob = 1.0 / len(list_t)
                 for k in range(len(list_t)):
                     self._policy_table[self.map_p_to_conflicts["%d" %(i)]][list_t[k]] = default_prob
+
+    def check_if_conflict(self,place):
+        outs = np.flatnonzero(self.I_minus[place])
+        return (1 < len(outs)) 
+    
+    def p_to_conflict(self,place):
+        return self.map_p_to_conflicts["%d" %(place)]
 
     def set_new_state(self):
         p_with_conf = list(self.map_p_to_conflicts.keys())

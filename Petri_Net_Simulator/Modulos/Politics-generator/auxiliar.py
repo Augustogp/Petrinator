@@ -7,6 +7,7 @@ import traceback
 import random
 from agent import Agent
 from enviroment import Environment
+import action
 
 
 
@@ -36,9 +37,15 @@ def main():
     marking = matrices["Marcado"]
     print("Marcado")
     print(marking)
+    num_transitions = len(matrix_i[0])
     
+    transitions_weight = {}
+    for i in range(1,num_transitions+1):
+        transitions_weight["T%d" %(i)] = random.randint(0,10)
+    print("Pesos transiciones")
+    print(transitions_weight)
 
-    enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking)
+    enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()))
     agent = Agent(matrix_i_minus,enviroment)
     #agent.print_policy()
     print("Policies:")
@@ -47,6 +54,8 @@ def main():
     print(agent.action_space)
     print(enviroment.map_p_to_conflicts)
 
+    action.action(agent,enviroment)
+    print(agent._policy_table)
 
     
 main()

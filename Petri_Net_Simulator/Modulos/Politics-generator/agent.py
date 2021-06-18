@@ -1,8 +1,9 @@
 import numpy as np
+import math
 
 class Agent:
     
-    def __init__(self, I, enviroment, policy=None, discount_factor = 0.1, learning_rate = 0.1, ratio_explotacion = 0.9):
+    def __init__(self, I, enviroment, policy=None, discount_factor = 0.1, learning_rate = 0.1, ratio_explotacion = 0.5):
 
        # self.enviroment = enviroment
         # Creamos la tabla de politicas
@@ -23,26 +24,36 @@ class Agent:
         self.learning_rate = learning_rate
         self.ratio_explotacion = ratio_explotacion
         self.action_space = list(range(len(I[0])))
+        self.set_initial_state(enviroment)
 
+    def set_initial_state(self,enviroment):
+        bool_conflict = enviroment.check_if_conflict(0)
+        if(bool_conflict):
+            self.state = enviroment.p_to_conflict(0)
+        else:
+            self.state = -1
     
-    def get_next_step(self, state, enviroment):
+    def get_next_step(self, enviroment):
 
         self.action_space = enviroment.getExt()
         found = 0
         for i in range(len(self.action_space)):
-            if(self.action_space[i] == 1 & found == 0):
+            if(self.action_space[i] == 1 and found == 0):
                 for j in range(len(self._policy_table)):
                     if(self._policy_table[j][i] != 0):
-                       idx_action = np.random.choice(np.flatnonzero(self._policy_table[j]))
+                       vector_choice = [i for i, x in enumerate(self._policy_table[j]) if x != 0]
+                       idx_action = np.random.choice(vector_choice) 
+                       #idx_action = np.random.choice(np.flatnonzero(self._policy_table[j]))
                        next_step = list(self._policy_table[j])[idx_action]
                        self.state = j
                        found = 1
                        break
         if(not found):
+            print("No encontro conflicto")
             #If it didnt found any transition fireable thats in a conflict, it fires a random one
             idx_action = np.random.choice(np.flatnonzero(self.action_space))
-            next_step = list(self.action_space)[idx_action]
-            return next_step
+            #next_step = list(self.action_space)[idx_action]
+            return idx_action
 
         # Damos un paso aleatorio...
         # next_step = np.random.choice(list(game.action_space))
@@ -51,14 +62,22 @@ class Agent:
         # o tomaremos el mejor paso...
         if np.random.uniform() <= self.ratio_explotacion:
             # tomar el maximo
+            max_prob = max(self._policy_table[self.state])
+            #vector_choice = np.where(self._policy_table[self.state] == max_prob)[0]
+            vector_choice = [i for i, x in enumerate(self._policy_table[self.state]) if x == max_prob]
+            '''
             idx_action = np.random.choice(np.flatnonzero(
-                self._policy_table[self.state] == self._policy_table[self.state].max()
+                self._policy_table[self.state] == max(self._policy_table[self.state])
                 ))
-            next_step = list(self._policy_table[self.state])[idx_action]
+            '''
+            idx_action = np.random.choice(vector_choice)
+            #next_step = list(self._policy_table[self.state])[idx_action]
+            print("Encontro conflicto")
 
-        return next_step
-    '''
+        return idx_action
+    
     # actualizamos las politicas con las recompensas obtenidas
+    '''
     def update(self, enviroment, old_state, action_taken, reward_action_taken, new_state, reached_end):
         idx_action_taken =list(self.action_space).index(action_taken)
 
@@ -73,6 +92,46 @@ class Agent:
         self._q_table[old_state[0], old_state[1], old_state[2], idx_action_taken] = actual_q_value + \
                                               self.learning_rate*(future_max_q_value -actual_q_value)
     '''
+    
+    def update(self,old_state,action_taken,reward_action_taken):
+
+        if(not self.checkIfNecesary(old_state,action_taken)):
+            return
+
+        actual_policy_value = self._policy_table[old_state][action_taken]
+
+        #idx_action_taken =list(self._policy_table[old_state]).index(action_taken)
+        print("Probabilidades pre cambio")
+        print(self._policy_table)
+        print("Probabilidad actual: %f" %(actual_policy_value))
+
+       # actual_policy_values_options = self._policy_table[old_state]
+       # actual_policy_value = actual_policy_values_options[idx_action_taken]
+        loss = - math.log(actual_policy_value) * reward_action_taken
+        print("Reward: %f" %(reward_action_taken))
+        print("Loss: %f" %(loss))
+        self._policy_table[old_state][action_taken] = actual_policy_value - loss
+
+        vector_non_selected = [i for i, x in enumerate(self._policy_table[self.state]) if x != 0]
+        non_selected_count = len(vector_non_selected) - 1
+        for i in vector_non_selected:
+            if(i != action_taken):
+                self._policy_table[old_state][i] = self._policy_table[old_state][i] + loss / non_selected_count
+        print("Probabilidades post cambio")
+        print(self._policy_table)
+        '''
+        for i in range(len(self._policy_table[old_state])):
+            if beta == 0:
+                if(i == action_taken):
+                    self._policy_table[old_state][i] = self._policy_table[old_state][i] + 
+        '''
+
+    def checkIfNecesary(self,old_state,transition):
+        if (self._policy_table[old_state][transition] != 0):
+            return True
+        else:
+            return False
+
     def print_policy(self):
         for row in np.round(self._policy_table,1):
             for column in row:
@@ -87,3 +146,6 @@ class Agent:
 
     def get_places_with_conflicts(self):
         return self.map_p_to_conflicts.keys()
+
+    def get_state(self):
+        return self.state

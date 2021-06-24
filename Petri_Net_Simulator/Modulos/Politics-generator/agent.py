@@ -41,7 +41,10 @@ class Agent:
             if(self.action_space[i] == 1 and found == 0):
                 for j in range(len(self._policy_table)):
                     if(self._policy_table[j][i] != 0):
-                       vector_choice = [i for i, x in enumerate(self._policy_table[j]) if x != 0]
+                       enabled_conflict = self.action_space * self._policy_table[j]
+                       print("Conflicto habilitado")
+                       print(enabled_conflict)
+                       vector_choice = [i for i, x in enumerate(enabled_conflict) if x != 0]
                        idx_action = np.random.choice(vector_choice) 
                        #idx_action = np.random.choice(np.flatnonzero(self._policy_table[j]))
                        next_step = list(self._policy_table[j])[idx_action]
@@ -61,10 +64,12 @@ class Agent:
         
         # o tomaremos el mejor paso...
         if np.random.uniform() <= self.ratio_explotacion:
+
+            enabled_conflict = self.action_space * self._policy_table[j]
             # tomar el maximo
-            max_prob = max(self._policy_table[self.state])
-            #vector_choice = np.where(self._policy_table[self.state] == max_prob)[0]
-            vector_choice = [i for i, x in enumerate(self._policy_table[self.state]) if x == max_prob]
+            max_prob = max(enabled_conflict)
+            
+            vector_choice = [i for i, x in enumerate(enabled_conflict) if x == max_prob]
             '''
             idx_action = np.random.choice(np.flatnonzero(
                 self._policy_table[self.state] == max(self._policy_table[self.state])
@@ -110,7 +115,11 @@ class Agent:
         loss = - math.log(actual_policy_value) * reward_action_taken
         print("Reward: %f" %(reward_action_taken))
         print("Loss: %f" %(loss))
-        self._policy_table[old_state][action_taken] = actual_policy_value - loss
+
+        new_policy_value = actual_policy_value - loss
+        if(new_policy_value >= 1 or new_policy_value <= 0):
+            return
+        self._policy_table[old_state][action_taken] = new_policy_value
 
         vector_non_selected = [i for i, x in enumerate(self._policy_table[self.state]) if x != 0]
         non_selected_count = len(vector_non_selected) - 1

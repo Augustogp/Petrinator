@@ -6,6 +6,8 @@ import sys
 import traceback
 import random
 from agent import Agent
+from enviroment import Environment
+import action
 
 #socket
 host = "127.0.0.1"
@@ -47,6 +49,9 @@ def main():
     matrix_inhibition = matrices["Inhibicion"]
     print("Matriz Inhibicion")
     print(matrix_inhibition)
+    marking = matrices["Marcado"]
+    print("Marcado")
+    print(marking)
     tInvTraces = json.loads(json_traces)
     num_transitions = len(matrix_i[0])
     
@@ -54,7 +59,17 @@ def main():
     for i in range(1,num_transitions+1):
         transitions_weight["T%d" %(i)] = random.randint(0,10)
     print(transitions_weight)
-    
+    transitions_weight["T1"] = 2
+    transitions_weight["T2"] = 2
+    transitions_weight["T3"] = 2
+    transitions_weight["T4"] = 3
+    transitions_weight["T5"] = 0
+    transitions_weight["T6"] = 1
+    transitions_weight["T7"] = 0
+    transitions_weight["T8"] = 0
+    transitions_weight["T9"] = 0
+    transitions_weight["T10"] = 0
+
     print(tInvTraces)
     tinv_weights = {}
     for key in tInvTraces:
@@ -65,9 +80,20 @@ def main():
                 tinv_weights[key] += transitions_weight["T%d" %(i)]
     print(tinv_weights)
 
-    agent = Agent(matrix_i_minus)
+    enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()))
+    agent = Agent(matrix_i_minus,enviroment)
+    #agent.print_policy()
+    print("Policies:")
     print(agent.get_policy())
+    print("Action space:")
+    print(agent.action_space)
+    print(enviroment.map_p_to_conflicts)
 
+    action.action(agent,enviroment)
+    print("Pesos transiciones")
+    print(transitions_weight)
+    print("Policies:")
+    print(agent.get_policy())
     
 
     

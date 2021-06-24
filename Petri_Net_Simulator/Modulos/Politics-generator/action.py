@@ -2,7 +2,7 @@ import numpy as np
 
 MAX_ITERATIONS = 3000
 
-def action(learner, enviroment, rounds=5000, discount_factor = 0.1, learning_rate = 0.1,
+def action(learner, enviroment, rounds=1, discount_factor = 0.1, learning_rate = 0.1,
          ratio_explotacion=0.9):
         
     
@@ -21,12 +21,12 @@ def action(learner, enviroment, rounds=5000, discount_factor = 0.1, learning_rat
             next_action = learner.get_next_step(enviroment)
             old_state = learner.get_state()
             reward = enviroment.fireNet(next_action)
-            if rounds > 1 and old_state != -1:
+            if itera > 1 and old_state != -1:
                 learner.update(old_state, next_action, reward)
             itera+=1
         
         steps.append(itera)
-        
+        '''
         total_rw+=game.total_reward
         if game.total_reward > max_points:
             max_points=game.total_reward
@@ -37,7 +37,7 @@ def action(learner, enviroment, rounds=5000, discount_factor = 0.1, learning_rat
                 
     if cicle>1:
         print('Partidas[',cicle,'] Avg.Puntos[',int(total_rw/cicle),'] Max score[', max_points,'] en partida[',first_max_reached,']')
-        
+        '''
     #learner.print_policy()
     
-    return learner, game
+    return learner, enviroment

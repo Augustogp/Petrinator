@@ -42,8 +42,7 @@ def main():
     transitions_weight = {}
     for i in range(1,num_transitions+1):
         transitions_weight["T%d" %(i)] = random.randint(0,10)
-    print("Pesos transiciones")
-    print(transitions_weight)
+    
 
     enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()))
     agent = Agent(matrix_i_minus,enviroment)
@@ -55,7 +54,10 @@ def main():
     print(enviroment.map_p_to_conflicts)
 
     action.action(agent,enviroment)
-    print(agent._policy_table)
+    print("Pesos transiciones")
+    print(transitions_weight)
+    print("Policies:")
+    print(agent.get_policy())
 
     
 main()

@@ -104,42 +104,51 @@ class Agent:
         if(not self.checkIfNecesary(old_state,action_taken)):
             return
 
-        actual_policy_value = self._policy_table[old_state][action_taken]
+        print()
 
-        aux_policy_values = self._policy_table[old_state]
+        vector_conflicts_with_t = self.get_rows_by_index_with_t_as_conf(action_taken)
 
-        #idx_action_taken =list(self._policy_table[old_state]).index(action_taken)
-        print("Probabilidades pre cambio")
-        print(self._policy_table)
-        print("Probabilidad actual: %f" %(actual_policy_value))
+        for conflict in vector_conflicts_with_t:
 
-       # actual_policy_values_options = self._policy_table[old_state]
-       # actual_policy_value = actual_policy_values_options[idx_action_taken]
-        loss = - math.log(actual_policy_value) * reward_action_taken
-        print("Reward: %f" %(reward_action_taken))
-        print("Loss: %f" %(loss))
+            actual_policy_value = self._policy_table[conflict][action_taken]
 
-        new_policy_value = actual_policy_value - loss
-        if(new_policy_value >= 1 or new_policy_value <= 0):
-            return
-        self._policy_table[old_state][action_taken] = new_policy_value
+            aux_policy_values = self._policy_table[conflict]
 
-        vector_non_selected = [i for i, x in enumerate(self._policy_table[self.state]) if x != 0]
-        non_selected_count = len(vector_non_selected) - 1
-        for i in vector_non_selected:
-            if(i != action_taken):
-                self._policy_table[old_state][i] = self._policy_table[old_state][i] + loss / non_selected_count
-                if(self._policy_table[old_state][i] <= 0):
-                    self._policy_table[old_state] = aux_policy_values
-                    break
-        print("Probabilidades post cambio")
-        print(self._policy_table)
-        '''
-        for i in range(len(self._policy_table[old_state])):
-            if beta == 0:
-                if(i == action_taken):
-                    self._policy_table[old_state][i] = self._policy_table[old_state][i] + 
-        '''
+            #idx_action_taken =list(self._policy_table[old_state]).index(action_taken)
+            print("Probabilidades pre cambio")
+            print(self._policy_table)
+            print("Probabilidad actual: %f" %(actual_policy_value))
+
+        # actual_policy_values_options = self._policy_table[old_state]
+        # actual_policy_value = actual_policy_values_options[idx_action_taken]
+            loss = - math.log(actual_policy_value) * reward_action_taken
+            print("Reward: %f" %(reward_action_taken))
+            print("Loss: %f" %(loss))
+
+            new_policy_value = actual_policy_value - loss
+            if(new_policy_value >= 1 or new_policy_value <= 0):
+                return
+            self._policy_table[conflict][action_taken] = new_policy_value
+
+            vector_non_selected = [i for i, x in enumerate(self._policy_table[conflict]) if x != 0]
+            
+            non_selected_count = len(vector_non_selected) - 1
+            for i in vector_non_selected:
+                if(i != action_taken):
+                    self._policy_table[conflict][i] = self._policy_table[conflict][i] + loss / non_selected_count
+                    if(self._policy_table[conflict][i] <= 0):
+                        self._policy_table[conflict] = aux_policy_values
+                        break
+            print("Probabilidades post cambio")
+            print(self._policy_table)
+
+
+    def get_rows_by_index_with_t_as_conf(self,t):
+        rows = []
+        for row in range(len(self._policy_table)):
+            if(self._policy_table[row][t] != 0):
+                rows.append(row)
+        return rows
 
     def checkIfNecesary(self,old_state,transition):
         if (self._policy_table[old_state][transition] != 0):

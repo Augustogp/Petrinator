@@ -59,6 +59,7 @@ def main():
     for i in range(1,num_transitions+1):
         transitions_weight["T%d" %(i)] = random.randint(0,10)
     print(transitions_weight)
+    '''
     transitions_weight["T1"] = 2
     transitions_weight["T2"] = 2
     transitions_weight["T3"] = 2
@@ -69,6 +70,7 @@ def main():
     transitions_weight["T8"] = 0
     transitions_weight["T9"] = 0
     transitions_weight["T10"] = 0
+    '''
 
     print(tInvTraces)
     tinv_weights = {}
@@ -93,7 +95,7 @@ def main():
     print("Pesos transiciones")
     print(transitions_weight)
     print("Policies:")
-    print(agent.get_policy())
+    agent.print_policy(enviroment)
     
 
     

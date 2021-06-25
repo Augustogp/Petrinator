@@ -1,9 +1,10 @@
+from enviroment import Environment
 import numpy as np
 import math
 
 class Agent:
     
-    def __init__(self, I, enviroment, policy=None, discount_factor = 0.1, learning_rate = 0.1, ratio_explotacion = 0.5):
+    def __init__(self, I, enviroment, policy=None, discount_factor = 0.1, learning_rate = 0.1, ratio_explotacion = 0.1):
 
        # self.enviroment = enviroment
         # Creamos la tabla de politicas
@@ -105,6 +106,8 @@ class Agent:
 
         actual_policy_value = self._policy_table[old_state][action_taken]
 
+        aux_policy_values = self._policy_table[old_state]
+
         #idx_action_taken =list(self._policy_table[old_state]).index(action_taken)
         print("Probabilidades pre cambio")
         print(self._policy_table)
@@ -126,6 +129,9 @@ class Agent:
         for i in vector_non_selected:
             if(i != action_taken):
                 self._policy_table[old_state][i] = self._policy_table[old_state][i] + loss / non_selected_count
+                if(self._policy_table[old_state][i] <= 0):
+                    self._policy_table[old_state] = aux_policy_values
+                    break
         print("Probabilidades post cambio")
         print(self._policy_table)
         '''
@@ -141,14 +147,18 @@ class Agent:
         else:
             return False
 
-    def print_policy(self):
-        for row in np.round(self._policy_table,1):
-            for column in row:
-                print('[', end='')
-                for value in column:
-                    print(str(value).zfill(5), end=' ')
-                print('] ', end='')
-            print('')
+    def print_policy(self,enviroment):
+        places_in_conf = list(enviroment.map_p_to_conflicts.keys())
+        print("     ",end="")
+        for i in range(1,len(self._policy_table[0])+1):
+            val = "T" + str(i)
+            print("%6s" %(val), end = " ") 
+        print()   
+        for place in range(len(self._policy_table)):
+            print(places_in_conf[place],end = ": [ ")
+            for transition in range(len(self._policy_table[0])):
+                print("%6.3f" %(self._policy_table[place][transition]), end=" ")
+            print("]")
             
     def get_policy(self):
         return self._policy_table

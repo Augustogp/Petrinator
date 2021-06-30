@@ -682,7 +682,6 @@ public class Root implements WindowListener, ListSelectionListener, SelectionCha
         algorithmsMenu.add(new ResponseTimeAction(this));
         algorithmsMenu.add(new SiphonsAction(this));
         algorithmsMenu.add(new SupervisionAction((this)));
-        algorithmsMenu.add(new TraceAction(this));
         algorithmsMenu.add(new TraceAction2(this));
 
         //matrixAction = new IncidenceMatrixAction(this);

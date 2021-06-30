@@ -69,7 +69,6 @@ public class SimulateAction extends AbstractAction
     private String serverIP = "";
     private String defaultIP = "localhost";
     private String defaultPort = "8080";
-    private static String transitionsBuffer = "";
 
     public SimulateAction(Root root, List<FileType> fileTypes) {
         this.root = root;
@@ -470,7 +469,6 @@ public class SimulateAction extends AbstractAction
 
             if(!skipGraphicalFire) {
                 root.getEventList().addEvent((transition.getLabel() + " was fired!"));
-                transitionsBuffer = transitionsBuffer + transition.getLabel() + ",";
             }
 
             if(transition.isTimed())
@@ -535,14 +533,6 @@ public class SimulateAction extends AbstractAction
 
     }
 
-    public static String get_transitionBuffer(){
-        return transitionsBuffer;
-    }
-
-    public static void clean_transitionBuffer(){
-        transitionsBuffer = "";
-        return;
-    }
 
     public void countDown(Transition t)
     {

@@ -15,11 +15,9 @@ port = int(sys.argv[1])
 socket_cli =  socket.socket()
 socket_cli.connect((host, port))
 
-traces_log2 = sys.argv[2]
+json_matrices2 = str(sys.argv[2])
 
-json_matrices2 = str(sys.argv[3])
-
-json_traces = str(sys.argv[4])
+json_traces = str(sys.argv[3])
 
 defaultLogPath = os.path.expanduser("~") + r"\logs\transitions.txt"
 currentDirectory = os.getcwd()
@@ -29,7 +27,6 @@ def main():
 
     print("Estoy en python")
     
-    print("traces_string " + traces_log2)
     print("json_matrices2 " + json_matrices2)
 
     print("json type " + str(type(json_matrices2)))
@@ -83,7 +80,7 @@ def main():
     print(tinv_weights)
 
     enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()))
-    agent = Agent(matrix_i_minus,enviroment)
+    agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.3)
     #agent.print_policy()
     print("Policies:")
     print(agent.get_policy())

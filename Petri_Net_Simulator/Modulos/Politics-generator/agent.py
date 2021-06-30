@@ -4,7 +4,7 @@ import math
 
 class Agent:
     
-    def __init__(self, I, enviroment, policy=None, discount_factor = 0.1, learning_rate = 0.1, ratio_explotacion = 0.1):
+    def __init__(self, I, enviroment, policy=None, discount_factor = 0.1, learning_rate = 0.1, ratio_explotacion = 0.5):
 
        # self.enviroment = enviroment
         # Creamos la tabla de politicas
@@ -112,7 +112,7 @@ class Agent:
 
             actual_policy_value = self._policy_table[conflict][action_taken]
 
-            aux_policy_values = self._policy_table[conflict]
+            aux_policy_values = self._policy_table[conflict].copy()
 
             #idx_action_taken =list(self._policy_table[old_state]).index(action_taken)
             print("Probabilidades pre cambio")

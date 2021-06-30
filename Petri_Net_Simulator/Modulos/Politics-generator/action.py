@@ -1,8 +1,7 @@
 import numpy as np
 
-MAX_ITERATIONS = 3000
 
-def action(learner, enviroment, rounds=1, discount_factor = 0.1, learning_rate = 0.1,
+def action(learner, enviroment, max_iterations = 3000, rounds=1, discount_factor = 0.1, learning_rate = 0.1,
          ratio_explotacion=0.9):
         
     
@@ -17,7 +16,7 @@ def action(learner, enviroment, rounds=1, discount_factor = 0.1, learning_rate =
         reward, done = None, None
         
         itera=0
-        while (done != True) and (itera < MAX_ITERATIONS):
+        while (done != True) and (itera < max_iterations):
             next_action = learner.get_next_step(enviroment)
             old_state = learner.get_state()
             reward = enviroment.fireNet(next_action)

@@ -2,7 +2,6 @@ package org.petrinator.editor.actions.algorithms;
 
 import com.google.gson.Gson;
 import org.petrinator.editor.Root;
-import org.petrinator.editor.actions.SimulateAction;
 import org.petrinator.editor.actions.algorithms.reachability.CRTree;
 import org.petrinator.petrinet.Marking;
 import org.petrinator.petrinet.Transition;
@@ -244,7 +243,7 @@ public class TraceAction2 extends AbstractAction
             System.out.println("Path del modulo es " + defaultModulesPath);
             String pathToPythonMain = defaultModulesPath + "\\main_politics.py";
             System.out.println("Path del python " + pathToPythonMain);
-            ProcessBuilder pb = new ProcessBuilder("python", pathToPythonMain, String.valueOf(port_server), SimulateAction.get_transitionBuffer(), generateJsonMatrixStructure(),sendTInvTraces());
+            ProcessBuilder pb = new ProcessBuilder("python", pathToPythonMain, String.valueOf(port_server), generateJsonMatrixStructure(),sendTInvTraces());
             // System.out.println("python" + pathToPythonMain + String.valueOf(port_server) + SimulateAction.get_transitionBuffer() + generateJsonMatrixStructure());
             try {
                 Process process = pb.start();

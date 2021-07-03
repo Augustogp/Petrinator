@@ -56,18 +56,22 @@ def main():
     for i in range(1,num_transitions+1):
         transitions_weight["T%d" %(i)] = random.randint(0,10)
     print(transitions_weight)
-    '''
+    
     transitions_weight["T1"] = 2
-    transitions_weight["T2"] = 2
+    transitions_weight["T2"] = 0
     transitions_weight["T3"] = 2
-    transitions_weight["T4"] = 3
-    transitions_weight["T5"] = 0
-    transitions_weight["T6"] = 1
+    transitions_weight["T4"] = 0
+    transitions_weight["T5"] = 2
+    transitions_weight["T6"] = 0
     transitions_weight["T7"] = 0
     transitions_weight["T8"] = 0
-    transitions_weight["T9"] = 0
+    transitions_weight["T9"] = 2
     transitions_weight["T10"] = 0
-    '''
+    transitions_weight["T11"] = 2
+    transitions_weight["T12"] = 0
+    transitions_weight["T13"] = 2
+    transitions_weight["T14"] = 0
+    
 
     print(tInvTraces)
     tinv_weights = {}
@@ -79,7 +83,7 @@ def main():
                 tinv_weights[key] += transitions_weight["T%d" %(i)]
     print(tinv_weights)
 
-    enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()))
+    enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()),use_w_not_inv=True)
     agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.3)
     #agent.print_policy()
     print("Policies:")

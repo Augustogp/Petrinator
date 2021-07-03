@@ -4,8 +4,11 @@ import numpy as np
 
 class Environment:
     
-    def __init__(self, I_minus, I_plus, Inhibition, Marking,cost_vector):
+    def __init__(self, I_minus, I_plus, Inhibition, Marking,cost_vector,use_w_not_inv = True):
         
+        if(use_w_not_inv != None):
+            self.use_w_not_inv = use_w_not_inv
+
         self.action_space = range(len(I_minus))
         
         self._step_penalization = 0
@@ -107,12 +110,20 @@ class Environment:
         return self.updateCost(transition)
 
     def updateCost(self,transition):
+        if((not self.use_w_not_inv) and (not self.check_if_t_is_in_conf(transition))):
+            return 0
         self.historic_costs.append(self.cost_vector[transition])
         reward = (self.cost_vector[transition] - self.mean_cost) / 100
         self.mean_cost = self.mean_cost + (self.cost_vector[transition] - self.mean_cost) / len(self.historic_costs)
         beta = int(not(self.cost_vector[transition] < self.mean_cost))
         return reward
 
+    def check_if_t_is_in_conf(self,transition):
+        for i in range(len(self._policy_table)):
+            if(self._policy_table[i][transition] != 0):
+                return True
+        return False
+                
 
     def step(self,transition):
         self.fireNet(transition)

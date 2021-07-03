@@ -164,7 +164,7 @@ class Agent:
             print("%6s" %(val), end = " ") 
         print()   
         for place in range(len(self._policy_table)):
-            print(places_in_conf[place],end = ": [ ")
+            print(int(places_in_conf[place]) + 1,end = ": [ ")
             for transition in range(len(self._policy_table[0])):
                 print("%6.3f" %(self._policy_table[place][transition]), end=" ")
             print("]")

@@ -44,8 +44,25 @@ def main():
         transitions_weight["T%d" %(i)] = random.randint(0,10)
     
 
-    enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()))
-    agent = Agent(matrix_i_minus,enviroment)
+    transitions_weight["T1"] = 2
+    transitions_weight["T2"] = 1
+    transitions_weight["T3"] = 2
+    transitions_weight["T4"] = 3
+    transitions_weight["T5"] = 4
+    transitions_weight["T6"] = 0
+    transitions_weight["T7"] = 1
+    transitions_weight["T8"] = 3
+    transitions_weight["T9"] = 1
+    transitions_weight["T10"] = 20
+    transitions_weight["T11"] = 0
+    transitions_weight["T12"] = 0
+    transitions_weight["T13"] = 0
+    transitions_weight["T14"] = 0
+    transitions_weight["T15"] = 0
+    
+
+    enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()),use_w_not_inv=False)
+    agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.3)
     #agent.print_policy()
     print("Policies:")
     print(agent.get_policy())
@@ -57,7 +74,7 @@ def main():
     print("Pesos transiciones")
     print(transitions_weight)
     print("Policies:")
-    print(agent.get_policy())
+    agent.print_policy(enviroment)
 
     
 main()

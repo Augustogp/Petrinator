@@ -16,6 +16,7 @@ class Agent:
            # self._q_table = np.zeros(position)
             self._policy_table = []
             self._policy_table = enviroment.get_policy_table()
+            self._conflicts = self.set_conflicts()
             '''
             for i in range(len(I)):
                 row = [0] * len(I[0])
@@ -26,6 +27,12 @@ class Agent:
         self.ratio_explotacion = ratio_explotacion
         self.action_space = list(range(len(I[0])))
         self.set_initial_state(enviroment)
+
+    def set_conflicts(self):
+        conflicts = {}
+        for i in range(len(self._policy_table)):
+            conflicts["%d" %(i)] = [i for i, x in enumerate(self._policy_table[i]) if x != 0]
+        return conflicts
 
     def set_initial_state(self,enviroment):
         bool_conflict = enviroment.check_if_conflict(0)
@@ -38,50 +45,57 @@ class Agent:
 
         self.action_space = enviroment.getExt()
         found = 0
-        for i in range(len(self.action_space)):
-            if(self.action_space[i] == 1 and found == 0):
+        t_in_conf = []
+        vector_t = [i for i, x in enumerate(self.action_space) if x != 0]
+        for i in vector_t:
+            if(self.action_space[i] == 1):
                 for j in range(len(self._policy_table)):
                     if(self._policy_table[j][i] != 0):
+                       if i not in t_in_conf:
+                            t_in_conf.append(i)
                        enabled_conflict = self.action_space * self._policy_table[j]
-                       print("Conflicto habilitado")
-                       print(enabled_conflict)
+                       #print("Conflicto habilitado")
+                       #print(enabled_conflict)
                        vector_choice = [i for i, x in enumerate(enabled_conflict) if x != 0]
                        idx_action = np.random.choice(vector_choice) 
                        #idx_action = np.random.choice(np.flatnonzero(self._policy_table[j]))
                        next_step = list(self._policy_table[j])[idx_action]
                        self.state = j
                        found = 1
-                       break
+                       #break
+
+        '''
+        if(found):
+            idx_action = np.random.choice(t_in_conf)
+            
         if(not found):
-            print("No encontro conflicto")
+           # print("No encontro conflicto")
             #If it didnt found any transition fireable thats in a conflict, it fires a random one
             idx_action = np.random.choice(np.flatnonzero(self.action_space))
             #next_step = list(self.action_space)[idx_action]
             return idx_action
-
+        '''
         # Damos un paso aleatorio...
         # next_step = np.random.choice(list(game.action_space))
         # Ya tenemos esto con lo de arriba 
         
         # o tomaremos el mejor paso...
-        if np.random.uniform() <= self.ratio_explotacion:
-
-            enabled_conflict = self.action_space * self._policy_table[j]
-            # tomar el maximo
-            max_prob = max(enabled_conflict)
-            
-            vector_choice = [i for i, x in enumerate(enabled_conflict) if x == max_prob]
-            '''
-            idx_action = np.random.choice(np.flatnonzero(
-                self._policy_table[self.state] == max(self._policy_table[self.state])
-                ))
-            '''
-            idx_action = np.random.choice(vector_choice)
-            #next_step = list(self._policy_table[self.state])[idx_action]
-            print("Encontro conflicto")
-
+        
+        if found and np.random.uniform() <= self.ratio_explotacion:
+            idx_conf_action = np.random.choice(t_in_conf)
+            max_prob_transition = 0
+            for i in range(len(self._conflicts)):
+                if idx_conf_action in self._conflicts["%d" %(i)]:
+                    enabled_conflict = self.action_space * self._policy_table[i]
+                    max_prob = max(enabled_conflict)
+                    if(max_prob > max_prob_transition):
+                        max_prob_transition = max_prob
+                        vector_choice = [i for i, x in enumerate(enabled_conflict) if x == max_prob]
+                        idx_action = np.random.choice(vector_choice)
+        else:
+            idx_action = np.random.choice(np.flatnonzero(self.action_space))
         return idx_action
-    
+        
     # actualizamos las politicas con las recompensas obtenidas
     '''
     def update(self, enviroment, old_state, action_taken, reward_action_taken, new_state, reached_end):
@@ -104,7 +118,7 @@ class Agent:
         if(not self.checkIfNecesary(old_state,action_taken)):
             return
 
-        print()
+        #print()
 
         vector_conflicts_with_t = self.get_rows_by_index_with_t_as_conf(action_taken)
 
@@ -115,15 +129,15 @@ class Agent:
             aux_policy_values = self._policy_table[conflict].copy()
 
             #idx_action_taken =list(self._policy_table[old_state]).index(action_taken)
-            print("Probabilidades pre cambio")
-            print(self._policy_table)
-            print("Probabilidad actual: %f" %(actual_policy_value))
+            #print("Probabilidades pre cambio")
+            #print(self._policy_table)
+            #print("Probabilidad actual: %f" %(actual_policy_value))
 
         # actual_policy_values_options = self._policy_table[old_state]
         # actual_policy_value = actual_policy_values_options[idx_action_taken]
             loss = - math.log(actual_policy_value) * reward_action_taken
-            print("Reward: %f" %(reward_action_taken))
-            print("Loss: %f" %(loss))
+            #print("Reward: %f" %(reward_action_taken))
+            #print("Loss: %f" %(loss))
 
             new_policy_value = actual_policy_value - loss
             if(new_policy_value >= 1 or new_policy_value <= 0):
@@ -139,8 +153,8 @@ class Agent:
                     if(self._policy_table[conflict][i] <= 0):
                         self._policy_table[conflict] = aux_policy_values
                         break
-            print("Probabilidades post cambio")
-            print(self._policy_table)
+            #print("Probabilidades post cambio")
+            #print(self._policy_table)
 
 
     def get_rows_by_index_with_t_as_conf(self,t):

@@ -1,11 +1,13 @@
-from os import environ
 import re
+from requirements import Requirements
 
 class Enviroment_Supervisor:
 
-    def __init__(self,TInv,enviroment,step):
+    def __init__(self,TInv,enviroment,requirements,step):
         self._enviroment = enviroment
         self.step = step
+        self._requirements = requirements
+        self.tInvs = list(TInv.values())
         self.createRegEx(TInv)
 
     def createRegEx(self,TInv):
@@ -45,3 +47,15 @@ class Enviroment_Supervisor:
             res = nuevo_resultado
         print("Contadores")
         print(counters)
+        porcentual_count = [x / sum(counters) for x in counters]
+        print("Resultados buscados")
+        print(self._requirements.Inv_Politics)
+        print("Contadores expresados en porcentaje")
+        print(porcentual_count)
+        for i in range(len(porcentual_count)):
+            if(porcentual_count[i] < self._requirements.Inv_Politics[i]):
+                for transition in self.tInvs[i]:
+                    self._enviroment.cost_vector[transition-1] += 1
+            elif(porcentual_count[i] > self._requirements.Inv_Politics[i]):
+                for transition in self.tInvs[i]:
+                    self._enviroment.cost_vector[transition-1] -= 1        

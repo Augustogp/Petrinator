@@ -102,11 +102,11 @@ class Environment:
     def createExt(self):
         self.Ext = np.logical_and(self.E,self.B)
         self.Ext = self.Ext.astype(int)
-        print("Print Ext")
-        print(self.Ext)
+        #print("Print Ext")
+        #print(self.Ext)
 
     def fireNet(self,transition):
-        print("Se dispara %d" %(transition))
+        #print("Se dispara %d" %(transition))
         self.count_t_fires[transition] += 1
         fireVector = self.createFiringVector(transition)
         self.marking = self.marking - np.dot(self.I_minus,fireVector)

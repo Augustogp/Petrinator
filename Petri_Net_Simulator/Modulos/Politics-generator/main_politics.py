@@ -9,6 +9,7 @@ from agent import Agent
 from enviroment import Environment
 import action
 from enviroment_supervisor import Enviroment_Supervisor
+from requirements import Requirements
 
 #socket
 host = "127.0.0.1"
@@ -68,7 +69,7 @@ def main():
                 tinv_weights[key] += transitions_weight["T%d" %(i)]
     print(tinv_weights)
 
-
+    requirements = Requirements(len(tInvTraces))
     enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()),use_w_not_inv=False)
     agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.3)
     #agent.print_policy()
@@ -78,15 +79,17 @@ def main():
     print(agent.action_space)
     print(enviroment.map_p_to_conflicts)
 
-    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,500)
+    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,250)
 
 
     print("Expresiones regulares:")
     print(enviroment_supervisor.regex_list)
 
-    action.action(agent,enviroment,enviroment_supervisor)
-    print("Pesos transiciones")
+    action.action(agent,enviroment,enviroment_supervisor,max_iterations=10000)
+    print("Pesos transiciones al inicio")
     print(transitions_weight)
+    print("Pesos transiciones al final")
+    print(enviroment.cost_vector)
     print("Policies:")
     agent.print_policy(enviroment)
     

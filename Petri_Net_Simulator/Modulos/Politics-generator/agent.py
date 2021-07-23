@@ -141,7 +141,7 @@ class Agent:
 
             new_policy_value = actual_policy_value - loss
             if(new_policy_value >= 1 or new_policy_value <= 0):
-                return
+                continue
             self._policy_table[conflict][action_taken] = new_policy_value
 
             vector_non_selected = [i for i, x in enumerate(self._policy_table[conflict]) if x != 0]
@@ -171,6 +171,7 @@ class Agent:
             return False
 
     def print_policy(self,enviroment):
+        acum = 0
         places_in_conf = list(enviroment.map_p_to_conflicts.keys())
         print("     ",end="")
         for i in range(1,len(self._policy_table[0])+1):
@@ -182,6 +183,11 @@ class Agent:
             for transition in range(len(self._policy_table[0])):
                 print("%6.3f" %(self._policy_table[place][transition]), end=" ")
             print("]")
+        print("     ",end="")
+        for i in range(len(self._policy_table[0])):
+            print("%6d" %(enviroment.count_t_fires[i]), end=" ")
+            acum += enviroment.count_t_fires[i]
+        print("\nacum: %d " %(acum))
             
     def get_policy(self):
         return self._policy_table

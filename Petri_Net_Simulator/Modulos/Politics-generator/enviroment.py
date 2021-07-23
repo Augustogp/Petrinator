@@ -35,7 +35,11 @@ class Environment:
         self.mean_cost = 0
         self.historic_costs = []
         self.beta = 0
-        
+
+        self.historic_fires = ""
+
+        self.count_t_fires = [0] * len(self.I_minus[0])
+
         self.createVarEcuExt()
 
         
@@ -103,10 +107,12 @@ class Environment:
 
     def fireNet(self,transition):
         print("Se dispara %d" %(transition))
+        self.count_t_fires[transition] += 1
         fireVector = self.createFiringVector(transition)
         self.marking = self.marking - np.dot(self.I_minus,fireVector)
         self.marking = self.marking + np.dot(self.I_plus,fireVector)
         self.createVarEcuExt()
+        self.historic_fires +=  ",T" + str(transition) + ","
         return self.updateCost(transition)
 
     def updateCost(self,transition):

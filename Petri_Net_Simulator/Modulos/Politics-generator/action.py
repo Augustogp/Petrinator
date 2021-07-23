@@ -1,7 +1,14 @@
 import numpy as np
 
+def is_integer(n):
+    try:
+        float(n)
+    except ValueError:
+        return False
+    else:
+        return float(n).is_integer()
 
-def action(learner, enviroment, max_iterations = 3000, rounds=1, discount_factor = 0.1, learning_rate = 0.1,
+def action(learner, enviroment, enviroment_supervisor, max_iterations = 3000, rounds=1, discount_factor = 0.1, learning_rate = 0.1,
          ratio_explotacion=0.9):
         
     
@@ -22,6 +29,8 @@ def action(learner, enviroment, max_iterations = 3000, rounds=1, discount_factor
             reward = enviroment.fireNet(next_action)
             if itera > 1 and old_state != -1:
                 learner.update(old_state, next_action, reward)
+                if is_integer(float(itera)/enviroment_supervisor.step):
+                    enviroment_supervisor.next_step()
             itera+=1
         
         steps.append(itera)

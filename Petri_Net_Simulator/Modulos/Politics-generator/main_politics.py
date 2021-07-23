@@ -8,6 +8,7 @@ import random
 from agent import Agent
 from enviroment import Environment
 import action
+from enviroment_supervisor import Enviroment_Supervisor
 
 #socket
 host = "127.0.0.1"
@@ -56,46 +57,7 @@ def main():
     for i in range(1,num_transitions+1):
         transitions_weight["T%d" %(i)] = random.randint(0,10)
     print(transitions_weight)
-    
-    '''
-    transitions_weight["T1"] = 2
-    transitions_weight["T2"] = 2
-    transitions_weight["T3"] = 2
-    transitions_weight["T4"] = 2
-    transitions_weight["T5"] = 2
-    transitions_weight["T6"] = 0
-    transitions_weight["T7"] = 1
-    transitions_weight["T8"] = 1
-    transitions_weight["T9"] = 1
-    transitions_weight["T10"] = 1
-    transitions_weight["T11"] = 1
-    transitions_weight["T12"] = 0
-    
-    transitions_weight["T13"] = 2
-    transitions_weight["T14"] = 0
-    '''
-    
-    transitions_weight["T1"] = 0
-    transitions_weight["T2"] = 2
-    transitions_weight["T3"] = 2
-    transitions_weight["T4"] = 1
-    transitions_weight["T5"] = 2
-    transitions_weight["T6"] = 1
-    transitions_weight["T7"] = 1
-    transitions_weight["T8"] = 2
-    transitions_weight["T9"] = 1
-    transitions_weight["T10"] = 2
-    transitions_weight["T11"] = 0
-    transitions_weight["T12"] = 1
-    transitions_weight["T13"] = 3
-    transitions_weight["T14"] = 1
-    transitions_weight["T15"] = 1
-    transitions_weight["T16"] = 3
-    transitions_weight["T17"] = 2
-    transitions_weight["T18"] = 2
-    transitions_weight["T19"] = 2
-    transitions_weight["T20"] = 0
-    
+
     print(tInvTraces)
     tinv_weights = {}
     for key in tInvTraces:
@@ -106,6 +68,7 @@ def main():
                 tinv_weights[key] += transitions_weight["T%d" %(i)]
     print(tinv_weights)
 
+
     enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()),use_w_not_inv=False)
     agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.3)
     #agent.print_policy()
@@ -115,7 +78,13 @@ def main():
     print(agent.action_space)
     print(enviroment.map_p_to_conflicts)
 
-    action.action(agent,enviroment)
+    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,500)
+
+
+    print("Expresiones regulares:")
+    print(enviroment_supervisor.regex_list)
+
+    action.action(agent,enviroment,enviroment_supervisor)
     print("Pesos transiciones")
     print(transitions_weight)
     print("Policies:")

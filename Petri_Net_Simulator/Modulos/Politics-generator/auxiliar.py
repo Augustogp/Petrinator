@@ -8,6 +8,7 @@ import random
 from agent import Agent
 from enviroment import Environment
 import action
+from enviroment_supervisor import Enviroment_Supervisor
 
 
 
@@ -38,27 +39,13 @@ def main():
     print("Marcado")
     print(marking)
     num_transitions = len(matrix_i[0])
+
+    tInvTraces = {"TInv1":[0,1,3,5],"TInv2":[0,2,4,5],"TInv3":[6,7,8,9]}
+
     
     transitions_weight = {}
     for i in range(1,num_transitions+1):
         transitions_weight["T%d" %(i)] = random.randint(0,10)
-    
-
-    transitions_weight["T1"] = 2
-    transitions_weight["T2"] = 1
-    transitions_weight["T3"] = 2
-    transitions_weight["T4"] = 3
-    transitions_weight["T5"] = 4
-    transitions_weight["T6"] = 0
-    transitions_weight["T7"] = 1
-    transitions_weight["T8"] = 3
-    transitions_weight["T9"] = 1
-    transitions_weight["T10"] = 20
-    transitions_weight["T11"] = 0
-    transitions_weight["T12"] = 0
-    transitions_weight["T13"] = 0
-    transitions_weight["T14"] = 0
-    transitions_weight["T15"] = 0
     
 
     enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()),use_w_not_inv=False)
@@ -68,9 +55,12 @@ def main():
     print(agent.get_policy())
     print("Action space:")
     print(agent.action_space)
-    print(enviroment.map_p_to_conflicts)
+    print(enviroment.map_p_to_conflicts)    
+    
+    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,500)
 
-    action.action(agent,enviroment)
+
+    action.action(agent,enviroment,enviroment_supervisor)
     print("Pesos transiciones")
     print(transitions_weight)
     print("Policies:")

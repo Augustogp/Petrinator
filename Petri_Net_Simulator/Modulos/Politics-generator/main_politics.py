@@ -10,6 +10,8 @@ from enviroment import Environment
 import action
 from enviroment_supervisor import Enviroment_Supervisor
 from requirements import Requirements
+import matplotlib.pyplot as plt
+
 
 #socket
 host = "127.0.0.1"
@@ -56,8 +58,26 @@ def main():
     
     transitions_weight = {}
     for i in range(1,num_transitions+1):
-        transitions_weight["T%d" %(i)] = random.randint(0,10)
+        #transitions_weight["T%d" %(i)] = random.randint(0,10)
+        transitions_weight["T%d" %(i)] = 5
     print(transitions_weight)
+
+    '''
+    transitions_weight["T1"] = 5
+    transitions_weight["T2"] = 5
+    transitions_weight["T3"] = 5
+    transitions_weight["T4"] = 5
+    transitions_weight["T5"] = 5
+    transitions_weight["T6"] = 5
+    transitions_weight["T7"] = 5
+    transitions_weight["T8"] = 5
+    transitions_weight["T9"] = 5
+    transitions_weight["T10"] = 5
+    transitions_weight["T11"] = 5
+    transitions_weight["T12"] = 5
+    transitions_weight["T13"] = 5
+    transitions_weight["T14"] = 5
+    '''
 
     print(tInvTraces)
     tinv_weights = {}
@@ -85,14 +105,22 @@ def main():
     print("Expresiones regulares:")
     print(enviroment_supervisor.regex_list)
 
-    action.action(agent,enviroment,enviroment_supervisor,max_iterations=10000)
+    action.action(agent,enviroment,enviroment_supervisor,max_iterations=20000)
     print("Pesos transiciones al inicio")
     print(transitions_weight)
     print("Pesos transiciones al final")
     print(enviroment.cost_vector)
     print("Policies:")
     agent.print_policy(enviroment)
-    
+    '''
+    plt.figure(0)
+    n_plots = len(transitions_weight)
+    fig, ax = plt.subplots(n_plots)
+    for transition in range(n_plots):
+      ax[transition].scatter(x = range(len(agent._historic_rewards[transition])), y = agent._historic_rewards[transition])
 
+    plt.show()
+    '''
+    enviroment_supervisor.print_total_fire_proportions()
     
 main()

@@ -27,6 +27,10 @@ class Agent:
         self.ratio_explotacion = ratio_explotacion
         self.action_space = list(range(len(I[0])))
         self.set_initial_state(enviroment)
+        self._historic_rewards = []
+        for i in range(len(self._policy_table[0])):
+            self._historic_rewards.append([])
+        
 
     def set_conflicts(self):
         conflicts = {}
@@ -118,9 +122,9 @@ class Agent:
         if(not self.checkIfNecesary(old_state,action_taken)):
             return
 
-        #print()
-
         vector_conflicts_with_t = self.get_rows_by_index_with_t_as_conf(action_taken)
+
+        self._historic_rewards[action_taken].append(reward_action_taken)
 
         for conflict in vector_conflicts_with_t:
 

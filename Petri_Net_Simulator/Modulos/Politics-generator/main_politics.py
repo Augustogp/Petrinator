@@ -99,13 +99,13 @@ def main():
     print(agent.action_space)
     print(enviroment.map_p_to_conflicts)
 
-    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,250)
+    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,300,9)
 
 
     print("Expresiones regulares:")
     print(enviroment_supervisor.regex_list)
 
-    action.action(agent,enviroment,enviroment_supervisor,max_iterations=20000)
+    action.action(agent,enviroment,enviroment_supervisor,max_iterations=30000)
     print("Pesos transiciones al inicio")
     print(transitions_weight)
     print("Pesos transiciones al final")

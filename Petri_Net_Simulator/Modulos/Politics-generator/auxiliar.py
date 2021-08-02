@@ -48,7 +48,8 @@ def main():
     
     transitions_weight = {}
     for i in range(1,num_transitions+1):
-        transitions_weight["T%d" %(i)] = random.randint(0,10)
+        #transitions_weight["T%d" %(i)] = random.randint(0,10)
+        transitions_weight["T%d" %(i)] = 5
     
     requirements = Requirements(len(tInvTraces))
     enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()),use_w_not_inv=False)
@@ -58,9 +59,9 @@ def main():
     print(agent.get_policy())
     print("Action space:")
     print(agent.action_space)
-    print(enviroment.map_p_to_conflicts)    
-    
-    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,500)
+    print(enviroment.map_p_to_conflicts)
+
+    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,250)
 
 
     print("Expresiones regulares:")
@@ -73,13 +74,6 @@ def main():
     print(enviroment.cost_vector)
     print("Policies:")
     agent.print_policy(enviroment)
-
-    '''
-    for transition in range(len(transitions_weight)):
-      plt.figure(transition)
-      for i in range(len(agent._historic_rewards[transition])):
-        plt.plot(i,agent._historic_rewards[transition][i])
-    plt.show() 
     '''
     plt.figure(0)
     n_plots = len(transitions_weight)
@@ -88,6 +82,9 @@ def main():
       ax[transition].scatter(x = range(len(agent._historic_rewards[transition])), y = agent._historic_rewards[transition])
 
     plt.show()
+    '''
+    enviroment_supervisor.print_total_fire_proportions()
+    
 
 
 main()

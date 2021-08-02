@@ -29,8 +29,8 @@ def action(learner, enviroment, enviroment_supervisor, max_iterations = 3000, ro
             reward = enviroment.fireNet(next_action)
             if itera > 1 and old_state != -1:
                 learner.update(old_state, next_action, reward)
-                if is_integer(float(itera)/enviroment_supervisor.step):
-                    enviroment_supervisor.next_step()
+                if is_integer(float(itera)/enviroment_supervisor.batch):
+                    enviroment_supervisor.new_batch()
                     learner.print_policy(enviroment)
             itera+=1
         

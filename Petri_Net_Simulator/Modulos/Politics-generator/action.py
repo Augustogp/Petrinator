@@ -31,7 +31,7 @@ def action(learner, enviroment, enviroment_supervisor, max_iterations = 3000, ro
                 learner.update(old_state, next_action, reward)
                 if is_integer(float(itera)/enviroment_supervisor.batch):
                     enviroment_supervisor.new_batch()
-                    learner.print_policy(enviroment)
+                    #learner.print_policy(enviroment)
             itera+=1
         
         steps.append(itera)

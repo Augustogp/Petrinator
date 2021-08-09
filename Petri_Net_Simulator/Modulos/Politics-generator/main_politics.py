@@ -60,23 +60,24 @@ def main():
     for i in range(1,num_transitions+1):
         #transitions_weight["T%d" %(i)] = random.randint(0,10)
         transitions_weight["T%d" %(i)] = 5
+        #transitions_weight["T%d" %(i)] = i
     print(transitions_weight)
 
     '''
-    transitions_weight["T1"] = 5
-    transitions_weight["T2"] = 5
-    transitions_weight["T3"] = 5
-    transitions_weight["T4"] = 5
-    transitions_weight["T5"] = 5
-    transitions_weight["T6"] = 5
+    transitions_weight["T1"] = 2
+    transitions_weight["T2"] = 2
+    transitions_weight["T3"] = 3
+    transitions_weight["T4"] = 3
+    transitions_weight["T5"] = 4
+    transitions_weight["T6"] = 4
     transitions_weight["T7"] = 5
     transitions_weight["T8"] = 5
-    transitions_weight["T9"] = 5
-    transitions_weight["T10"] = 5
-    transitions_weight["T11"] = 5
-    transitions_weight["T12"] = 5
-    transitions_weight["T13"] = 5
-    transitions_weight["T14"] = 5
+    transitions_weight["T9"] = 6
+    transitions_weight["T10"] = 6
+    transitions_weight["T11"] = 7
+    transitions_weight["T12"] = 7
+    transitions_weight["T13"] = 8
+    transitions_weight["T14"] = 8
     '''
 
     print(tInvTraces)
@@ -99,13 +100,13 @@ def main():
     print(agent.action_space)
     print(enviroment.map_p_to_conflicts)
 
-    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,300,9)
+    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,agent,300,10,10)
 
 
     print("Expresiones regulares:")
     print(enviroment_supervisor.regex_list)
 
-    action.action(agent,enviroment,enviroment_supervisor,max_iterations=30000)
+    action.action(agent,enviroment,enviroment_supervisor,max_iterations=100000)
     print("Pesos transiciones al inicio")
     print(transitions_weight)
     print("Pesos transiciones al final")
@@ -121,6 +122,8 @@ def main():
 
     plt.show()
     '''
+    enviroment_supervisor.print_probability()
     enviroment_supervisor.print_total_fire_proportions()
+    
     
 main()

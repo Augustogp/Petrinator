@@ -210,22 +210,41 @@ public class TraceAction2 extends AbstractAction
         }
 
         private void redirectOutput(Process process) throws IOException {
-            BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
-            StringBuilder builder = new StringBuilder();
-            String line = null;
-            while ( (line = reader.readLine()) != null) {
-                builder.append(line);
-                builder.append(System.getProperty("line.separator"));
-            }
-            reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
-            line = null;
-            while ( (line = reader.readLine()) != null) {
-                builder.append(line);
-                builder.append(System.getProperty("line.separator"));
-            }
-            String result = builder.toString();
-            System.out.println("Resultados Python: " + result);
+
+            Thread t = new Thread() {
+                public void run() {
+                    BufferedReader reader =
+                            new BufferedReader(new InputStreamReader(process.getInputStream()));
+                    StringBuilder builder = new StringBuilder();
+                    String line = null;
+                    while (true) {
+                        try {
+                            if (!((line = reader.readLine()) != null)) break;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        builder.append(line);
+                        builder.append(System.getProperty("line.separator"));
+                        String result = builder.toString();
+                        System.out.println(result);
+                    }
+                    reader = new BufferedReader(new InputStreamReader(process.getErrorStream()));
+                    line = null;
+                    while (true) {
+                        try {
+                            if (!((line = reader.readLine()) != null)) break;
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        builder.append(line);
+                        builder.append(System.getProperty("line.separator"));
+                        String result = builder.toString();
+                        System.out.println(result);
+                    }
+
+                }
+            };
+            t.start();
         }
 
         private void createSocket(){
@@ -246,11 +265,14 @@ public class TraceAction2 extends AbstractAction
             ProcessBuilder pb = new ProcessBuilder("python", pathToPythonMain, String.valueOf(port_server), generateJsonMatrixStructure(),sendTInvTraces());
             // System.out.println("python" + pathToPythonMain + String.valueOf(port_server) + SimulateAction.get_transitionBuffer() + generateJsonMatrixStructure());
             try {
+                pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
+                pb.redirectOutput(ProcessBuilder.Redirect.INHERIT);
+                pb.redirectError(ProcessBuilder.Redirect.INHERIT);
                 Process process = pb.start();
 
                 //Blocking accept executed python client
                 sock_cli = sock_server.accept();
-                redirectOutput(process); //Print stdout and stderr of python in java
+                //redirectOutput(process); //Print stdout and stderr of python in java
 
                 out_stream = new DataOutputStream(sock_cli.getOutputStream());
                 in_stream = new DataInputStream(sock_cli.getInputStream());

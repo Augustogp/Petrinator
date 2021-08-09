@@ -51,6 +51,21 @@ def main():
         #transitions_weight["T%d" %(i)] = random.randint(0,10)
         transitions_weight["T%d" %(i)] = 5
     
+    transitions_weight["T1"] = 1
+    transitions_weight["T2"] = 2
+    transitions_weight["T3"] = 3
+    transitions_weight["T4"] = 4
+    transitions_weight["T5"] = 5
+    transitions_weight["T6"] = 6
+    transitions_weight["T7"] = 7
+    transitions_weight["T8"] = 8
+    transitions_weight["T9"] = 9
+    transitions_weight["T10"] = 10
+    transitions_weight["T11"] = 1
+    transitions_weight["T12"] = 2
+    transitions_weight["T13"] = 3
+    transitions_weight["T14"] = 4
+
     requirements = Requirements(len(tInvTraces))
     enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()),use_w_not_inv=False)
     agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.3)
@@ -61,13 +76,13 @@ def main():
     print(agent.action_space)
     print(enviroment.map_p_to_conflicts)
 
-    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,250)
+    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,agent,300,5)
 
 
     print("Expresiones regulares:")
     print(enviroment_supervisor.regex_list)
 
-    action.action(agent,enviroment,enviroment_supervisor,max_iterations=10000)
+    action.action(agent,enviroment,enviroment_supervisor,max_iterations=100000)
     print("Pesos transiciones al inicio")
     print(transitions_weight)
     print("Pesos transiciones al final")
@@ -83,6 +98,7 @@ def main():
 
     plt.show()
     '''
+    enviroment_supervisor.print_probability()
     enviroment_supervisor.print_total_fire_proportions()
     
 

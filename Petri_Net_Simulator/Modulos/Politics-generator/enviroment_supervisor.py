@@ -2,7 +2,7 @@ import re
 from requirements import Requirements
 import matplotlib.pyplot as plt
 import numpy as np
-import os
+import math
 
 
 
@@ -25,6 +25,7 @@ class Enviroment_Supervisor:
         self.agent = agent
         self.counters_historical_prob = self.create_dictionary_hisotrical_porb()
         self.n_batch_graph = n_batch_graph
+        self.alpha = 0.06
 
 
     def new_batch(self):
@@ -58,17 +59,30 @@ class Enviroment_Supervisor:
         vector = [0] * self.num_batches
         #Closer to 0 means older
         num = 0.05
+        
         for i in range(self.num_batches-1,-1,-1):
             vector[i] = num
+            num = num - num * 0.3
+        '''
+        for i in range(self.num_batches):
+            vector[i] = num
             num = num - num * 0.5
+        '''
         return vector
 
     def get_pond_vector_by_perc(self,actual_values):
         diference_vector = [0] * len(actual_values)
         for i in range(len(actual_values)):
-            diference_vector[i] = abs(actual_values[i] - self._requirements.Inv_Politics[i])
-            if(diference_vector[i] < 0.06):
+            #diference_vector[i] = abs(actual_values[i] - self._requirements.Inv_Politics[i])
+            difference = abs(actual_values[i] - self._requirements.Inv_Politics[i])
+            if(difference < 0.05):
                 diference_vector[i] = 0
+                continue
+            else: 
+                #diference_vector[i] = math.pow(difference,0.5)
+                diference_vector[i] = 1 - math.pow(math.e,(-self.alpha * difference))
+                #diference_vector[i] = difference
+            
         return diference_vector
         
 

@@ -3,12 +3,13 @@ from requirements import Requirements
 import matplotlib.pyplot as plt
 import numpy as np
 import math
-
+from sklearn.metrics import mean_squared_error
 
 
 class Enviroment_Supervisor:
 
-    def __init__(self,TInv,enviroment,requirements,agent,batch,n_batch_graph=5,num_batches=5):
+    def __init__(self,TInv,enviroment,requirements,agent,batch,n_batch_graph=5,num_batches=5,alpha=0.1
+                ,initial_step=0.1,discount_factor=0.3,confidence_interval=0.05):
         self._enviroment = enviroment
         self.batch = batch
         self.batches_dict = {}
@@ -25,7 +26,10 @@ class Enviroment_Supervisor:
         self.agent = agent
         self.counters_historical_prob = self.create_dictionary_hisotrical_porb()
         self.n_batch_graph = n_batch_graph
-        self.alpha = 0.06
+        self.alpha = alpha
+        self.initial_step = initial_step
+        self.discount_factor = discount_factor
+        self.confidence_interval = confidence_interval
 
 
     def new_batch(self):
@@ -58,11 +62,11 @@ class Enviroment_Supervisor:
     def get_pond_vector_by_batch(self):
         vector = [0] * self.num_batches
         #Closer to 0 means older
-        num = 0.05
+        num = self.initial_step
         
         for i in range(self.num_batches-1,-1,-1):
             vector[i] = num
-            num = num - num * 0.3
+            num = num - num * self.discount_factor
         '''
         for i in range(self.num_batches):
             vector[i] = num
@@ -75,7 +79,7 @@ class Enviroment_Supervisor:
         for i in range(len(actual_values)):
             #diference_vector[i] = abs(actual_values[i] - self._requirements.Inv_Politics[i])
             difference = abs(actual_values[i] - self._requirements.Inv_Politics[i])
-            if(difference < 0.05):
+            if(difference < self.confidence_interval):
                 diference_vector[i] = 0
                 continue
             else: 
@@ -222,6 +226,9 @@ class Enviroment_Supervisor:
             m, b = np.polyfit(range(len(self._historic_counters[invariant])), self._historic_counters[invariant], 1)
             ax[invariant].plot(range(len(self._historic_counters[invariant])), m*range(len(self._historic_counters[invariant])) + b,color='k')
             ax[invariant].scatter(x = range(len(self._historic_counters_prom[invariant])), y = self._historic_counters_prom[invariant],color='g')
+            vector_true = np.full(len(self._historic_counters[invariant]),self._requirements.Inv_Politics[invariant])
+            mse=mean_squared_error(vector_true,self._historic_counters[invariant])
+            ax[invariant].set_title("MSE: " + str(mse))
         plt.show()
         plt.close()
 

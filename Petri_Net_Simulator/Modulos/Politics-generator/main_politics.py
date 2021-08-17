@@ -101,7 +101,14 @@ def main():
     print(agent.action_space)
     print(enviroment.map_p_to_conflicts)
 
-    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,agent,300,10,10)
+    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,agent,
+                            batch=300,
+                            n_batch_graph=10,
+                            num_batches=10,
+                            alpha=0.1,
+                            initial_step=1,
+                            discount_factor=0.3,
+                            confidence_interval=0.05)
 
 
     print("Expresiones regulares:")

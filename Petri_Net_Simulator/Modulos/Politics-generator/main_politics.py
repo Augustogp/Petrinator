@@ -114,7 +114,7 @@ def main():
     print("Expresiones regulares:")
     print(enviroment_supervisor.regex_list)
 
-    action.action(agent,enviroment,enviroment_supervisor,max_iterations=100000)
+    action.action(agent,enviroment,enviroment_supervisor,max_iterations=100000,rounds=3)
     print("Pesos transiciones al inicio")
     print(transitions_weight)
     print("Pesos transiciones al final")
@@ -132,8 +132,8 @@ def main():
     '''
     end_time = time.time()
     print("--- %s seconds ---" % (end_time - start_time))
-    enviroment_supervisor.print_probability()
-    enviroment_supervisor.print_total_fire_proportions()
+    #enviroment_supervisor.print_probability()
+    #enviroment_supervisor.print_total_fire_proportions()
     
 start_time = time.time()    
 main()

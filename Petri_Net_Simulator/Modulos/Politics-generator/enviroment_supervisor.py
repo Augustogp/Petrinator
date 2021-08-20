@@ -31,6 +31,14 @@ class Enviroment_Supervisor:
         self.discount_factor = discount_factor
         self.confidence_interval = confidence_interval
 
+    def reset(self):
+        self.batches_dict = {}
+        self._historic_counters = []
+        self._historic_counters_prom = []      
+        for _ in range(len(self.tInvs)):
+            self._historic_counters.append([])
+            self._historic_counters_prom.append([])
+        self.counters_historical_prob = self.create_dictionary_hisotrical_porb()
 
     def new_batch(self):
         new_batch = self._enviroment.historic_fires
@@ -108,7 +116,7 @@ class Enviroment_Supervisor:
                 for pattern_idx in range(len(patterns)):
                     match = patterns[pattern_idx].match(res)
                     if match:
-                        counters[pattern_idx] += 1; 
+                        counters[pattern_idx] += 1 
                         break
                 if not match:
                     break
@@ -216,6 +224,10 @@ class Enviroment_Supervisor:
         for i in range(len(self.regex_list)):
             self._historic_counters_prom[i].append(counters_acum[i]/len(self.batches_dict))
 
+    def get_linear_regression_param(self,invariant):
+        m, b = np.polyfit(range(len(self._historic_counters_prom[invariant])), self._historic_counters_prom[invariant], 1)
+        return m, b
+
     def print_total_fire_proportions(self):
         n_plots = len(self._historic_counters)
         fig, ax = plt.subplots(n_plots)
@@ -223,28 +235,20 @@ class Enviroment_Supervisor:
             ax[invariant].scatter(x = range(len(self._historic_counters[invariant])), y = self._historic_counters[invariant],color='c')
             ax[invariant].axhline(y=self._requirements.Inv_Politics[invariant], color='r', linestyle='-')
             ax[invariant].plot(range(len(self._historic_counters[invariant])),self._historic_counters[invariant],color='c')
-            m, b = np.polyfit(range(len(self._historic_counters[invariant])), self._historic_counters[invariant], 1)
-            ax[invariant].plot(range(len(self._historic_counters[invariant])), m*range(len(self._historic_counters[invariant])) + b,color='k')
+            m, b = self.get_linear_regression_param(invariant)
+            ax[invariant].plot(range(len(self._historic_counters_prom[invariant])), m*range(len(self._historic_counters_prom[invariant])) + b,color='k')
             ax[invariant].scatter(x = range(len(self._historic_counters_prom[invariant])), y = self._historic_counters_prom[invariant],color='g')
-            vector_true = np.full(len(self._historic_counters[invariant]),self._requirements.Inv_Politics[invariant])
-            mse=mean_squared_error(vector_true,self._historic_counters[invariant])
-            ax[invariant].set_title("MSE: " + str(mse))
+            vector_true = np.full(len(self._historic_counters_prom[invariant]),self._requirements.Inv_Politics[invariant])
+            rmse=math.sqrt(mean_squared_error(vector_true,self._historic_counters_prom[invariant]))
+            ax[invariant].set_title("RMSE: " + str(rmse))
+            print("Invariante " + str(invariant))
+            print("Pendiente: " + str(m))
+            print("Ordenada: " + str(b))
+            print("RMSE: " + str(rmse))
         plt.show()
         plt.close()
 
         
-
-    def print_total_fire_proportions_thread(self):
-        n_plots = len(self._historic_counters)
-        fig, ax = plt.subplots(n_plots)
-        for invariant in range(n_plots):
-            ax[invariant].scatter(x = range(len(self._historic_counters[invariant])), y = self._historic_counters[invariant],color='c')
-            ax[invariant].axhline(y=self._requirements.Inv_Politics[invariant], color='r', linestyle='-')
-            ax[invariant].plot(range(len(self._historic_counters[invariant])),self._historic_counters[invariant],color='c')
-            m, b = np.polyfit(range(len(self._historic_counters[invariant])), self._historic_counters[invariant], 1)
-            ax[invariant].plot(range(len(self._historic_counters[invariant])), m*range(len(self._historic_counters[invariant])) + b,color='k')
-        plt.show()
-        plt.close()
 
     def create_dictionary_hisotrical_porb(self):
         counters_historical_prob = dict.fromkeys(self._enviroment.map_p_to_conflicts.keys())  # Create dictionary example: {place_1:None, place_18:None...}

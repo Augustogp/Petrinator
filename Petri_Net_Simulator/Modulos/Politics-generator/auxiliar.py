@@ -12,6 +12,8 @@ import action
 from enviroment_supervisor import Enviroment_Supervisor
 from requirements import Requirements
 import matplotlib.pyplot as plt
+import time
+
 
 
 
@@ -76,13 +78,20 @@ def main():
     print(agent.action_space)
     print(enviroment.map_p_to_conflicts)
 
-    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,agent,300,5)
+    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,agent,
+                            batch=300,
+                            n_batch_graph=10,
+                            num_batches=10,
+                            alpha=0.1,
+                            initial_step=0.1,
+                            discount_factor=0.1,
+                            confidence_interval=0.05)
 
 
     print("Expresiones regulares:")
     print(enviroment_supervisor.regex_list)
 
-    action.action(agent,enviroment,enviroment_supervisor,max_iterations=100000)
+    action.action(agent,enviroment,enviroment_supervisor,max_iterations=10000,rounds=3)
     print("Pesos transiciones al inicio")
     print(transitions_weight)
     print("Pesos transiciones al final")
@@ -98,10 +107,11 @@ def main():
 
     plt.show()
     '''
-    enviroment_supervisor.print_probability()
-    enviroment_supervisor.print_total_fire_proportions()
+    end_time = time.time()
+    print("--- %s seconds ---" % (end_time - start_time))
+    #enviroment_supervisor.print_probability()
+    #enviroment_supervisor.print_total_fire_proportions()
     
-
-
+start_time = time.time()    
 main()
 # %%

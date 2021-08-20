@@ -30,7 +30,13 @@ class Agent:
         self._historic_rewards = []
         for i in range(len(self._policy_table[0])):
             self._historic_rewards.append([])
-        
+
+    def reset(self,enviroment):
+        self._policy_table = enviroment.get_policy_table()
+        self.set_initial_state(enviroment)
+        self._historic_rewards = []
+        for i in range(len(self._policy_table[0])):
+            self._historic_rewards.append([])
 
     def set_conflicts(self):
         conflicts = {}
@@ -68,17 +74,7 @@ class Agent:
                        found = 1
                        #break
 
-        '''
-        if(found):
-            idx_action = np.random.choice(t_in_conf)
-            
-        if(not found):
-           # print("No encontro conflicto")
-            #If it didnt found any transition fireable thats in a conflict, it fires a random one
-            idx_action = np.random.choice(np.flatnonzero(self.action_space))
-            #next_step = list(self.action_space)[idx_action]
-            return idx_action
-        '''
+        
         # Damos un paso aleatorio...
         # next_step = np.random.choice(list(game.action_space))
         # Ya tenemos esto con lo de arriba 

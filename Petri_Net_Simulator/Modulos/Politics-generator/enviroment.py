@@ -49,6 +49,16 @@ class Environment:
 
     def reset(self):
         self.marking = self.initial_marking
+        self.historic_costs = []
+        self.historic_fires = ""
+        self.count_t_fires = [0] * len(self.I_minus[0])
+        self._policy_table = []
+        self.map_p_to_conflicts = {}
+        self.create_policy(self.I_minus)
+        self.mean_cost = 0
+        for transition in range(len(self.cost_vector)):
+            self.cost_vector[transition] = 5
+        self.createVarEcuExt()
                 
     def createVarEcuExt(self):
         self.createQ()

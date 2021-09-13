@@ -2,8 +2,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 import math
 from sklearn.metrics import mean_squared_error
-
-
+import time
 
 def is_integer(n):
     try:
@@ -28,6 +27,8 @@ def action(learner, enviroment, enviroment_supervisor, max_iterations = 3000, ro
 
 
     for cicle in range(0, rounds):
+        print("Cicle %d started\n" %(cicle))
+        start_time = time.time()   
         enviroment.reset()
         learner.reset(enviroment)
         enviroment_supervisor.reset()
@@ -55,6 +56,9 @@ def action(learner, enviroment, enviroment_supervisor, max_iterations = 3000, ro
             print("B[%d] in cicle %d is: %f" %(invariant,cicle,b))
             m_acum[invariant] += m
             b_acum[invariant] += b
+        
+        end_time = time.time()
+        print("Cicle %d ended, it lasted %s seconds\n" % (cicle,end_time - start_time))
 
     for invariant in range(len(enviroment_supervisor._historic_counters)):
         historic_counters_prom[invariant] = np.divide(historic_counters_acum[invariant], rounds)

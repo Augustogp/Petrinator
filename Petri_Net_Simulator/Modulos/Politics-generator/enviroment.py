@@ -4,12 +4,14 @@ import numpy as np
 
 class Environment:
     
-    def __init__(self, I_minus, I_plus, Inhibition, Marking,cost_vector,use_w_not_inv = True):
+    def __init__(self, I_minus, I_plus, Inhibition, Marking,cost_manager,use_w_not_inv = True):
         
         if(use_w_not_inv != None):
             self.use_w_not_inv = use_w_not_inv
 
         self.action_space = range(len(I_minus))
+
+        self.cost_manager = cost_manager
         
         self._step_penalization = 0
 
@@ -31,10 +33,10 @@ class Environment:
         self.I_plus = np.array(I_plus)
         self.initial_marking = np.array(Marking)
 
-        self.cost_vector = cost_vector
-        self.mean_cost = 0
-        self.historic_costs = []
-        self.beta = 0
+       # self.cost_vector = cost_vector
+       # self.mean_cost = 0
+       # self.historic_costs = []
+      #  self.beta = 0
 
         self.historic_fires = ""
 
@@ -49,15 +51,15 @@ class Environment:
 
     def reset(self):
         self.marking = self.initial_marking
-        self.historic_costs = []
+        self.cost_manager.historic_costs = []
         self.historic_fires = ""
         self.count_t_fires = [0] * len(self.I_minus[0])
         self._policy_table = []
         self.map_p_to_conflicts = {}
         self.create_policy(self.I_minus)
-        self.mean_cost = 0
-        for transition in range(len(self.cost_vector)):
-            self.cost_vector[transition] = 5
+        self.cost_manager.mean_cost = 0
+        for transition in range(len(self.cost_manager.cost_vector)):
+            self.cost_manager.cost_vector[transition] = 5
         self.createVarEcuExt()
                 
     def createVarEcuExt(self):
@@ -128,11 +130,8 @@ class Environment:
     def updateCost(self,transition):
         if((not self.use_w_not_inv) and (not self.check_if_t_is_in_conf(transition))):
             return 0
-        self.historic_costs.append(self.cost_vector[transition])
-        reward = (self.cost_vector[transition] - self.mean_cost) / 100
-        self.mean_cost = self.mean_cost + (self.cost_vector[transition] - self.mean_cost) / len(self.historic_costs)
-        beta = int(not(self.cost_vector[transition] < self.mean_cost))
-        return reward
+        return self.cost_manager.updateCost(transition)
+        
 
     def check_if_t_is_in_conf(self,transition):
         for i in range(len(self._policy_table)):

@@ -8,10 +8,11 @@ from sklearn.metrics import mean_squared_error
 
 class Enviroment_Supervisor:
 
-    def __init__(self,TInv,enviroment,requirements,agent,batch,n_batch_graph=5,num_batches=5,alpha=0.1
+    def __init__(self,TInv,enviroment,cost_manager,requirements,agent,batch,n_batch_graph=5,num_batches=5,alpha=0.1
                 ,initial_step=0.1,discount_factor=0.3,confidence_interval=0.05):
         self._enviroment = enviroment
         self.batch = batch
+        self.cost_manager = cost_manager
         self.batches_dict = {}
         self.num_batches = num_batches
         self._requirements = requirements
@@ -146,10 +147,10 @@ class Enviroment_Supervisor:
             for i in range(len(porcentual_count)):
                 if(porcentual_count[i] < self._requirements.Inv_Politics[i]):
                     for transition in self.tInvs[i]:
-                        self._enviroment.cost_vector[transition-1] -= 1 * pond_vector_by_batch[n_batch] * pond_vector_by_perc[i]
+                        self.cost_manager.cost_vector[transition-1] -= 1 * pond_vector_by_batch[n_batch] * pond_vector_by_perc[i]
                 elif(porcentual_count[i] > self._requirements.Inv_Politics[i]):
                     for transition in self.tInvs[i]:
-                        self._enviroment.cost_vector[transition-1] += 1 * pond_vector_by_batch[n_batch] * pond_vector_by_perc[i]
+                        self.cost_manager.cost_vector[transition-1] += 1 * pond_vector_by_batch[n_batch] * pond_vector_by_perc[i]
             #print("Vector costos despues: ")
             #print(self._enviroment.cost_vector)
         for i in range(len(self.regex_list)):

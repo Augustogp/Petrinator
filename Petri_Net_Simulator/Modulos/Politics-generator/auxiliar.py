@@ -13,6 +13,7 @@ from enviroment_supervisor import Enviroment_Supervisor
 from requirements import Requirements
 import matplotlib.pyplot as plt
 import time
+from invariant_cost_manager import Invariant_Cost_Manager
 
 
 
@@ -45,31 +46,18 @@ def main():
     print(marking)
     num_transitions = len(matrix_i[0])
 
-    tInvTraces = {"TInv1":[1, 2, 3, 4, 5, 6, 7],"TInv2":[13, 12, 11, 10, 9, 8, 14]}
+    tInvTraces = {"TInv1":[1, 2, 3, 4, 5, 6],"TInv2":[7, 8, 9, 10, 11, 12]}
 
-    
     transitions_weight = {}
     for i in range(1,num_transitions+1):
         #transitions_weight["T%d" %(i)] = random.randint(0,10)
         transitions_weight["T%d" %(i)] = 5
-    
-    transitions_weight["T1"] = 1
-    transitions_weight["T2"] = 2
-    transitions_weight["T3"] = 3
-    transitions_weight["T4"] = 4
-    transitions_weight["T5"] = 5
-    transitions_weight["T6"] = 6
-    transitions_weight["T7"] = 7
-    transitions_weight["T8"] = 8
-    transitions_weight["T9"] = 9
-    transitions_weight["T10"] = 10
-    transitions_weight["T11"] = 1
-    transitions_weight["T12"] = 2
-    transitions_weight["T13"] = 3
-    transitions_weight["T14"] = 4
+        #transitions_weight["T%d" %(i)] = i
+    print(transitions_weight)
 
+    cost_manager = Invariant_Cost_Manager(num_transitions+1,tInvTraces)
     requirements = Requirements(len(tInvTraces))
-    enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,list(transitions_weight.values()),use_w_not_inv=False)
+    enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,cost_manager,use_w_not_inv=False)
     agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.3)
     #agent.print_policy()
     print("Policies:")
@@ -78,24 +66,24 @@ def main():
     print(agent.action_space)
     print(enviroment.map_p_to_conflicts)
 
-    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,requirements,agent,
+    enviroment_supervisor = Enviroment_Supervisor(tInvTraces,enviroment,cost_manager,requirements,agent,
                             batch=300,
                             n_batch_graph=10,
                             num_batches=10,
-                            alpha=0.1,
+                            alpha=1,
                             initial_step=0.1,
-                            discount_factor=0.1,
+                            discount_factor=0.5,
                             confidence_interval=0.05)
 
 
     print("Expresiones regulares:")
     print(enviroment_supervisor.regex_list)
 
-    action.action(agent,enviroment,enviroment_supervisor,max_iterations=10000,rounds=3)
+    action.action(agent,enviroment,enviroment_supervisor,max_iterations=100000,rounds=1)
     print("Pesos transiciones al inicio")
     print(transitions_weight)
     print("Pesos transiciones al final")
-    print(enviroment.cost_vector)
+    print(cost_manager.cost_vector)
     print("Policies:")
     agent.print_policy(enviroment)
     '''
@@ -109,9 +97,10 @@ def main():
     '''
     end_time = time.time()
     print("--- %s seconds ---" % (end_time - start_time))
-    #enviroment_supervisor.print_probability()
-    #enviroment_supervisor.print_total_fire_proportions()
+    enviroment_supervisor.print_probability()
+    enviroment_supervisor.print_total_fire_proportions()
     
 start_time = time.time()    
 main()
+
 # %%

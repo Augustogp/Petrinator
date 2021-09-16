@@ -53,13 +53,14 @@ class Environment:
         self.marking = self.initial_marking
         self.cost_manager.historic_costs = []
         self.historic_fires = ""
+        self.cost_manager.partial_inv = ""
         self.count_t_fires = [0] * len(self.I_minus[0])
         self._policy_table = []
         self.map_p_to_conflicts = {}
         self.create_policy(self.I_minus)
         self.cost_manager.mean_cost = 0
-        for transition in range(len(self.cost_manager.cost_vector)):
-            self.cost_manager.cost_vector[transition] = 5
+        #for transition in range(len(self.cost_manager.cost_vector)):
+         #   self.cost_manager.cost_vector[transition] = 5
         self.createVarEcuExt()
                 
     def createVarEcuExt(self):
@@ -125,6 +126,7 @@ class Environment:
         self.marking = self.marking + np.dot(self.I_plus,fireVector)
         self.createVarEcuExt()
         self.historic_fires +=  ",T" + str(transition) + ","
+        self.cost_manager.partial_inv += ",T" + str(transition) + ","
         return self.updateCost(transition)
 
     def updateCost(self,transition):

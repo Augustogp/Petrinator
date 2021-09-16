@@ -13,24 +13,18 @@ class Enviroment_Supervisor:
         self._enviroment = enviroment
         self.batch = batch
         self.cost_manager = cost_manager
-        self.batches_dict = {}
         self.num_batches = num_batches
         self._requirements = requirements
         self.tInvs = list(TInv.values())
         self.createRegEx(TInv)
-        self._historic_counters = []
-        self._historic_counters_prom = []      
-        for i in range(len(self.tInvs)):
-            self._historic_counters.append([])
-            self._historic_counters_prom.append([])
-
         self.agent = agent
-        self.counters_historical_prob = self.create_dictionary_hisotrical_porb()
         self.n_batch_graph = n_batch_graph
         self.alpha = alpha
         self.initial_step = initial_step
         self.discount_factor = discount_factor
         self.confidence_interval = confidence_interval
+        self.reset()
+
 
     def reset(self):
         self.batches_dict = {}
@@ -40,10 +34,18 @@ class Enviroment_Supervisor:
             self._historic_counters.append([])
             self._historic_counters_prom.append([])
         self.counters_historical_prob = self.create_dictionary_hisotrical_porb()
+        self.patterns = []
+        for string in self.regex_list:
+            self.patterns.append(re.compile(string))
+        
+        
+
 
     def new_batch(self):
-        new_batch = self._enviroment.historic_fires
+        #new_batch = self._enviroment.historic_fires
+        new_batch = self._enviroment.cost_manager.inv_counters
         self._enviroment.historic_fires = ""
+        self._enviroment.cost_manager.inv_counters = [0] * len(self.regex_list)
         vector_batches_len = len(self.batches_dict)
         if(vector_batches_len < self.num_batches):
             self.batches_dict[vector_batches_len] = new_batch
@@ -103,19 +105,15 @@ class Enviroment_Supervisor:
         counters_acum = [0] * len(self.regex_list)
         pond_vector_by_batch = self.get_pond_vector_by_batch()
         for n_batch in range(len(self.batches_dict)):
-            
-            patterns = []
-            for string in self.regex_list:
-                patterns.append(re.compile(string))
-            
+            '''          
             res = self.batches_dict[n_batch]
 
             counters = [0] * len(self.regex_list)
 
             while True:
                 nuevo_resultado = ""
-                for pattern_idx in range(len(patterns)):
-                    match = patterns[pattern_idx].match(res)
+                for pattern_idx in range(len(self.patterns)):
+                    match = self.patterns[pattern_idx].match(res)
                     if match:
                         counters[pattern_idx] += 1 
                         break
@@ -124,10 +122,11 @@ class Enviroment_Supervisor:
                 for group in match.groups():
                     if group is not None: nuevo_resultado += group
                 res = nuevo_resultado
+            '''
         
-            #print("Contadores")
+            #print("Contadores batch %d" %(n_batch))
             #print(counters)
-            porcentual_count = [x / sum(counters) for x in counters]
+            porcentual_count = [x / sum(self.batches_dict[n_batch]) for x in self.batches_dict[n_batch]]
             if((self.n_batch_graph - len(self.batches_dict) + n_batch) >= 0):
                 counters_acum = np.add(counters_acum,porcentual_count)
             #print("Resultados buscados")
@@ -138,7 +137,7 @@ class Enviroment_Supervisor:
             #print(self._enviroment.cost_vector)
             #counters_vect[n_batch] = porcentual_count
             if(n_batch == self.num_batches - 1):
-                for i in range(len(counters)):
+                for i in range(len(self.batches_dict[n_batch])):
                     self._historic_counters[i].append(porcentual_count[i])
 
             
@@ -156,6 +155,7 @@ class Enviroment_Supervisor:
         for i in range(len(self.regex_list)):
             self._historic_counters_prom[i].append(counters_acum[i]/self.n_batch_graph)
 
+        self._enviroment.cost_manager.inv_counters = [0] * len(self.regex_list)
         list_places = list(self.counters_historical_prob.keys())
         for index_row_policy_table in range (len(self.agent._policy_table)): #  [  0.500  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.500  0.000  0.000  0.000  0.000  0.000 ]
             key_place_conflict = list_places[index_row_policy_table]

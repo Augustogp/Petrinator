@@ -13,6 +13,7 @@ from requirements import Requirements
 import matplotlib.pyplot as plt
 import time
 from simple_cost_manager import Simple_Cost_Manager
+from invariant_cost_manager import Invariant_Cost_Manager
 
 
 #socket
@@ -93,7 +94,7 @@ def main():
     print(tinv_weights)
 
 
-    cost_manager = Simple_Cost_Manager(num_transitions+1)
+    cost_manager = Invariant_Cost_Manager(num_transitions+1,tInvTraces)
     requirements = Requirements(len(tInvTraces))
     enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,cost_manager,use_w_not_inv=False)
     agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.3)
@@ -111,13 +112,13 @@ def main():
                             alpha=1,
                             initial_step=0.1,
                             discount_factor=0.5,
-                            confidence_interval=0.05)
+                            confidence_interval=1)
 
 
     print("Expresiones regulares:")
     print(enviroment_supervisor.regex_list)
 
-    action.action(agent,enviroment,enviroment_supervisor,max_iterations=100000,rounds=8)
+    action.action(agent,enviroment,enviroment_supervisor,max_iterations=100000,rounds=1)
     print("Pesos transiciones al inicio")
     print(transitions_weight)
     print("Pesos transiciones al final")
@@ -135,8 +136,8 @@ def main():
     '''
     end_time = time.time()
     print("--- %s seconds ---" % (end_time - start_time))
-    #enviroment_supervisor.print_probability()
-    #enviroment_supervisor.print_total_fire_proportions()
+    enviroment_supervisor.print_probability()
+    enviroment_supervisor.print_total_fire_proportions()
     
 start_time = time.time()    
 main()

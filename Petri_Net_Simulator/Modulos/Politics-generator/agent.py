@@ -1,3 +1,4 @@
+from numpy.core.numeric import NaN
 from enviroment import Environment
 import numpy as np
 import math
@@ -94,6 +95,7 @@ class Agent:
                         idx_action = np.random.choice(vector_choice)
         else:
             idx_action = np.random.choice(np.flatnonzero(self.action_space))
+
         return idx_action
         
     # actualizamos las politicas con las recompensas obtenidas

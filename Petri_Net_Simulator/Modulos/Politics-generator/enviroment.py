@@ -44,10 +44,6 @@ class Environment:
 
         self.createVarEcuExt()
 
-        
-        print("h:")
-        print(self.H_transposed)
-        #self.score = 0
 
     def reset(self):
         self.marking = self.initial_marking
@@ -177,7 +173,7 @@ class Environment:
         p_with_conf = list(self.map_p_to_conflicts.keys())
         j = 0
         for i in p_with_conf:
-            print("j: %d e i: %s" %(j,i) )
+           # print("j: %d e i: %s" %(j,i) )
             self.state[j] = self.marking[int(i)]
             j += 1
 

@@ -45,6 +45,8 @@ class Enviroment_Supervisor:
         #new_batch = self._enviroment.historic_fires
         new_batch = self._enviroment.cost_manager.inv_counters
         self._enviroment.historic_fires = ""
+        for inv in range(len(self._enviroment.cost_manager.inv_counters)):
+            self._enviroment.cost_manager.inv_counters_acum[inv] += self._enviroment.cost_manager.inv_counters[inv]         
         self._enviroment.cost_manager.inv_counters = [0] * len(self.regex_list)
         vector_batches_len = len(self.batches_dict)
         if(vector_batches_len < self.num_batches):
@@ -88,15 +90,12 @@ class Enviroment_Supervisor:
     def get_pond_vector_by_perc(self,actual_values):
         diference_vector = [0] * len(actual_values)
         for i in range(len(actual_values)):
-            #diference_vector[i] = abs(actual_values[i] - self._requirements.Inv_Politics[i])
             difference = abs(actual_values[i] - self._requirements.Inv_Politics[i])
             if(difference < self.confidence_interval):
                 diference_vector[i] = 0
                 continue
             else: 
-                #diference_vector[i] = math.pow(difference,0.5)
                 diference_vector[i] = 1 - math.pow(math.e,(-self.alpha * difference))
-                #diference_vector[i] = difference
             
         return diference_vector
         
@@ -156,6 +155,8 @@ class Enviroment_Supervisor:
             self._historic_counters_prom[i].append(counters_acum[i]/self.n_batch_graph)
 
         self._enviroment.cost_manager.inv_counters = [0] * len(self.regex_list)
+        # print("Cost vector: ")
+        # print(self.cost_manager.cost_vector)
         list_places = list(self.counters_historical_prob.keys())
         for index_row_policy_table in range (len(self.agent._policy_table)): #  [  0.500  0.000  0.000  0.000  0.000  0.000  0.000  0.000  0.500  0.000  0.000  0.000  0.000  0.000 ]
             key_place_conflict = list_places[index_row_policy_table]
@@ -164,66 +165,6 @@ class Enviroment_Supervisor:
                 self.counters_historical_prob[key_place_conflict] [index_probability].append(self.agent._policy_table[index_row_policy_table][ vector_transition_conflict[index_probability] ])
 
 
-    def next_step2(self):
-        counters_acum = [0] * len(self.regex_list)
-        pond_vector_by_batch = self.get_pond_vector_by_batch()
-        last_batch_acc = [1] * len(self.regex_list)
-        for n_batch in range(len(self.batches_dict) -1 , -1, -1):
-            
-            patterns = []
-            for string in self.regex_list:
-                patterns.append(re.compile(string))
-            
-            res = self.batches_dict[n_batch]
-
-            #self._enviroment.historic_fires = ""
-
-            counters = [0] * len(self.regex_list)
-
-            while True:
-                nuevo_resultado = ""
-                for pattern_idx in range(len(patterns)):
-                    match = patterns[pattern_idx].match(res)
-                    if match:
-                        counters[pattern_idx] += 1; 
-                        break
-                if not match:
-                    break
-                for group in match.groups():
-                    if group is not None: nuevo_resultado += group
-                res = nuevo_resultado
-            
-            #print("Contadores")
-            #print(counters)
-            porcentual_count = [x / sum(counters) for x in counters]
-            counters_acum = np.add(counters_acum,porcentual_count)
-            #print("Resultados buscados")
-            #print(self._requirements.Inv_Politics)
-            #print("Contadores expresados en porcentaje")
-            #print(porcentual_count)
-            #print("Vector costos antes: ")
-            #print(self._enviroment.cost_vector)
-            
-            pond_vector_by_perc = self.get_pond_vector_by_perc(porcentual_count)
-            
-            if(n_batch == self.num_batches - 1):
-                for i in range(len(counters)):
-                    self._historic_counters[i].append(porcentual_count[i])
-                    if(pond_vector_by_perc[i] == 0):
-                        last_batch_acc[i] = 0
-
-            
-            for i in range(len(porcentual_count)):
-                if(porcentual_count[i] < self._requirements.Inv_Politics[i]):
-                    for transition in self.tInvs[i]:
-                        self._enviroment.cost_vector[transition-1] -= 1 * pond_vector_by_batch[n_batch] * pond_vector_by_perc[i] * last_batch_acc[i]
-                elif(porcentual_count[i] > self._requirements.Inv_Politics[i]):
-                    for transition in self.tInvs[i]:
-                        self._enviroment.cost_vector[transition-1] += 1 * pond_vector_by_batch[n_batch] * pond_vector_by_perc[i] * last_batch_acc[i]
-            #print("Vector costos despues: ")
-            #print(self._enviroment.cost_vector)
-        for i in range(len(self.regex_list)):
-            self._historic_counters_prom[i].append(counters_acum[i]/len(self.batches_dict))
 
     def get_linear_regression_param(self,invariant):
         m, b = np.polyfit(range(len(self._historic_counters_prom[invariant])), self._historic_counters_prom[invariant], 1)
@@ -233,15 +174,18 @@ class Enviroment_Supervisor:
         n_plots = len(self._historic_counters)
         fig, ax = plt.subplots(n_plots)
         for invariant in range(n_plots):
-            ax[invariant].scatter(x = range(len(self._historic_counters[invariant])), y = self._historic_counters[invariant],color='c')
+            #ax[invariant].scatter(x = range(len(self._historic_counters[invariant])), y = self._historic_counters[invariant],color='c')
             ax[invariant].axhline(y=self._requirements.Inv_Politics[invariant], color='r', linestyle='-')
-            ax[invariant].plot(range(len(self._historic_counters[invariant])),self._historic_counters[invariant],color='c')
+            #ax[invariant].plot(range(len(self._historic_counters[invariant])),self._historic_counters[invariant],color='c')
             m, b = self.get_linear_regression_param(invariant)
             ax[invariant].plot(range(len(self._historic_counters_prom[invariant])), m*range(len(self._historic_counters_prom[invariant])) + b,color='k')
             ax[invariant].scatter(x = range(len(self._historic_counters_prom[invariant])), y = self._historic_counters_prom[invariant],color='g')
+            ax[invariant].plot(range(len(self._historic_counters_prom[invariant])),self._historic_counters_prom[invariant],color='g')
             vector_true = np.full(len(self._historic_counters_prom[invariant]),self._requirements.Inv_Politics[invariant])
             rmse=math.sqrt(mean_squared_error(vector_true,self._historic_counters_prom[invariant]))
-            ax[invariant].set_title("RMSE: " + str(rmse))
+            len_4 = int(len(vector_true)/4)
+            rmse_4 = math.sqrt(mean_squared_error(vector_true[-len_4:],self._historic_counters_prom[invariant][-len_4:]))
+            ax[invariant].set_title("RMSE: " + str(rmse) + "  RMSE last quarter: " + str(rmse_4))
             print("Invariante " + str(invariant))
             print("Pendiente: " + str(m))
             print("Ordenada: " + str(b))

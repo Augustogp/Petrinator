@@ -37,6 +37,12 @@ def action(learner, enviroment, enviroment_supervisor, max_iterations = 3000, ro
         
         itera=0
         while (done != True) and (itera < max_iterations):
+            # if(itera < max_iterations/4):
+            #     learner.ratio_explotacion = 0.7
+            # elif(itera < max_iterations/2):
+            #     learner.ratio_explotacion = 0.5
+            # else:
+            #     learner.ratio_explotacion = 0.3
             next_action = learner.get_next_step(enviroment)
             old_state = learner.get_state()
             reward = enviroment.fireNet(next_action)
@@ -74,8 +80,10 @@ def action(learner, enviroment, enviroment_supervisor, max_iterations = 3000, ro
         ax[invariant].plot(range(len(historic_counters_prom[invariant])),historic_counters_prom[invariant],color='g')
         vector_true = np.full(len(historic_counters_prom[invariant]),enviroment_supervisor._requirements.Inv_Politics[invariant])
         rmse=math.sqrt(mean_squared_error(vector_true,historic_counters_prom[invariant]))
+        len_4 = int(len(vector_true)/4)
+        rmse_4 = math.sqrt(mean_squared_error(vector_true[-len_4:],historic_counters_prom[invariant][-len_4:]))
         string_pendiente = "{:.2e}".format(m_prom[invariant])
-        ax[invariant].set_title("RMSE: %.5f    Ordenada: %.3f   Pendiente: %s " %(rmse,b_prom[invariant],string_pendiente))
+        ax[invariant].set_title("RMSE: %.5f    RMSE_last_1/4: %.5f    Ordenada: %.3f   Pendiente: %s " %(rmse,rmse_4,b_prom[invariant],string_pendiente))
         print("Invariante " + str(invariant))
         print("Pendiente: " + str(m_prom[invariant]))
         print("Ordenada: " + str(b_prom[invariant]))

@@ -14,6 +14,7 @@ from requirements import Requirements
 import matplotlib.pyplot as plt
 import time
 from invariant_cost_manager import Invariant_Cost_Manager
+from simple_cost_manager import Simple_Cost_Manager
 
 
 
@@ -55,7 +56,7 @@ def main():
         #transitions_weight["T%d" %(i)] = i
     print(transitions_weight)
 
-    cost_manager = Invariant_Cost_Manager(num_transitions+1,tInvTraces)
+    cost_manager = Simple_Cost_Manager(num_transitions+1,tInvTraces)
     requirements = Requirements(len(tInvTraces))
     enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,cost_manager,use_w_not_inv=False)
     agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.3)

@@ -59,18 +59,17 @@ class Agent:
         t_in_conf = []
         vector_t = [i for i, x in enumerate(self.action_space) if x != 0]
         for i in vector_t:
-            if(self.action_space[i] == 1):
+            if(self.action_space[i] > 0):
                 for j in range(len(self._policy_table)):
                     if(self._policy_table[j][i] != 0):
                        if i not in t_in_conf:
                             t_in_conf.append(i)
-                       enabled_conflict = self.action_space * self._policy_table[j]
+                       #enabled_conflict = self.action_space * self._policy_table[j]
                        #print("Conflicto habilitado")
                        #print(enabled_conflict)
-                       vector_choice = [i for i, x in enumerate(enabled_conflict) if x != 0]
-                       idx_action = np.random.choice(vector_choice) 
+                       #vector_choice = [i for i, x in enumerate(enabled_conflict) if x != 0]
+                       #idx_action = np.random.choice(vector_choice) 
                        #idx_action = np.random.choice(np.flatnonzero(self._policy_table[j]))
-                       next_step = list(self._policy_table[j])[idx_action]
                        self.state = j
                        found = 1
                        #break
@@ -82,39 +81,50 @@ class Agent:
         
         # o tomaremos el mejor paso...
         
-        if found and np.random.uniform() <= self.ratio_explotacion:
+        if found and np.random.uniform() >= self.ratio_explotacion:
             idx_conf_action = np.random.choice(t_in_conf)
             max_prob_transition = 0
+            dict_probs = {}
+            conf_belongs = []
             for i in range(len(self._conflicts)):
                 if idx_conf_action in self._conflicts["%d" %(i)]:
+                    conf_belongs.append(i)
+                    '''
                     enabled_conflict = self.action_space * self._policy_table[i]
+                    #Prob gen
+                    for t in range(len(enabled_conflict)):
+                        if enabled_conflict[t] != 0 and (t not in dict_probs or enabled_conflict[t] > dict_probs[t]):
+                            dict_probs[t] = enabled_conflict[t]
+                    
+                    # Max Value
                     max_prob = max(enabled_conflict)
                     if(max_prob > max_prob_transition):
                         max_prob_transition = max_prob
                         vector_choice = [i for i, x in enumerate(enabled_conflict) if x == max_prob]
                         idx_action = np.random.choice(vector_choice)
+                    '''
+            conf_choice = np.random.choice(conf_belongs)
+            enabled_conflict = self.action_space * self._policy_table[conf_choice]
+            for t in range(len(self._policy_table[conf_choice])):
+                if enabled_conflict[t] != 0:
+                    dict_probs[t] = self._policy_table[conf_choice][t]
+           # print(dict_probs)
+            sum = np.sum(list(dict_probs.values()))
+            for t in dict_probs.keys():
+                dict_probs[t] = dict_probs[t] / sum
+            idx_action = np.random.choice(list(dict_probs.keys()),p=list(dict_probs.values()))
+
+            # sum = np.sum(list(dict_probs.values()))
+            # for t in dict_probs.keys():
+            #     dict_probs[t] = dict_probs[t] / sum
+            # idx_action = np.random.choice(list(dict_probs.keys()),p=list(dict_probs.values()))
+            
         else:
             idx_action = np.random.choice(np.flatnonzero(self.action_space))
 
         return idx_action
         
     # actualizamos las politicas con las recompensas obtenidas
-    '''
-    def update(self, enviroment, old_state, action_taken, reward_action_taken, new_state, reached_end):
-        idx_action_taken =list(self.action_space).index(action_taken)
-
-        actual_policy_values_options = self._policy_table[old_state]
-        actual_policy_value = actual_policy_values_options[idx_action_taken]
-
-        future_policy_value_options = self._q_table[new_state[0], new_state[1], new_state[2]]
-        future_max_q_value = reward_action_taken  +  self.discount_factor*future_q_value_options.max()
-        if reached_end:
-            future_max_q_value = reward_action_taken #maximum reward
-
-        self._q_table[old_state[0], old_state[1], old_state[2], idx_action_taken] = actual_q_value + \
-                                              self.learning_rate*(future_max_q_value -actual_q_value)
-    '''
-    
     def update(self,old_state,action_taken,reward_action_taken):
 
         if(not self.checkIfNecesary(old_state,action_taken)):

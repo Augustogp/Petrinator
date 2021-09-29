@@ -36,9 +36,14 @@ class Invariant_Cost_Manager:
         self.TInvs = list(TInvs.values())
         self.partial_inv = ""
         self.inv_counters = [0] * len(self.regex_list)
+        self.inv_counters_acum = [0] * len(self.regex_list)
         self.patterns = []
         for string in self.regex_list:
             self.patterns.append(re.compile(string))
+
+        for invariant in range(len(self.TInvs)):
+            cost_inv = self.get_inv_cost(invariant)
+            print("Costo invariante %d: %d" %(invariant,cost_inv))
 
     def updateCost(self,transition):
         self.checkCounters()
@@ -49,7 +54,7 @@ class Invariant_Cost_Manager:
         cost = np.mean(cost_list)
         if len(self.historic_costs) == 0:
             return 0
-        self.mean_cost = np.mean(self.historic_costs)
+        self.mean_cost = np.mean(self.historic_costs[-5:])
         reward = (cost - self.mean_cost) / 100
         return reward
 

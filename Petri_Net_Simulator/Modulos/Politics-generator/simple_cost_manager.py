@@ -10,6 +10,7 @@ class Simple_Cost_Manager:
         self.createRegEx(TInvs)
         self.partial_inv = ""
         self.inv_counters = [0] * len(self.regex_list)
+        self.inv_counters_acum = [0] * len(self.regex_list)
         self.patterns = []
         for string in self.regex_list:
             self.patterns.append(re.compile(string))

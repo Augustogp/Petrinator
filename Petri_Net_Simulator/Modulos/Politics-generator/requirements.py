@@ -10,7 +10,7 @@ class Requirements:
         self.Inv_Politics[0] = 0.35
         self.Inv_Politics[1] = 0.65
         #self.Inv_Politics[2] = 0.5
-        #self.Inv_Politics[3] = 0.20
+        #self.Inv_Politics[3] = 0.2
         print("Probabilidades T Inv")
         print(self.Inv_Politics)
         

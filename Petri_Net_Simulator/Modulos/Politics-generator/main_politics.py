@@ -97,7 +97,7 @@ def main():
     cost_manager = Invariant_Cost_Manager(num_transitions+1,tInvTraces)
     requirements = Requirements(len(tInvTraces))
     enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,cost_manager,use_w_not_inv=False)
-    agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.7)
+    agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.7,t_selection_metod=1)
     #agent.print_policy()
     print("Policies:")
     print(agent.get_policy())

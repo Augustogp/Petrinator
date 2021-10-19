@@ -55,8 +55,8 @@ class Environment:
         self.map_p_to_conflicts = {}
         self.create_policy(self.I_minus)
         self.cost_manager.mean_cost = 0
-        #for transition in range(len(self.cost_manager.cost_vector)):
-         #   self.cost_manager.cost_vector[transition] = 5
+        for transition in range(len(self.cost_manager.cost_vector)):
+            self.cost_manager.cost_vector[transition] = 5
         self.createVarEcuExt()
                 
     def createVarEcuExt(self):

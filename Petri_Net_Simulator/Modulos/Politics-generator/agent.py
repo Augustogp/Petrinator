@@ -5,7 +5,9 @@ import math
 
 class Agent:
     
-    def __init__(self, I, enviroment, policy=None, discount_factor = 0.1, learning_rate = 0.1, ratio_explotacion = 0.5):
+    #t_selection_metod = 0 -> max value; t_selection_metod = 1 -> probabilities
+    def __init__(self, I, enviroment, policy=None, discount_factor = 0.1, 
+                learning_rate = 0.1, ratio_explotacion = 0.5, t_selection_metod = 0):
 
        # self.enviroment = enviroment
         # Creamos la tabla de politicas
@@ -24,6 +26,7 @@ class Agent:
                 self._policy_table.append(row)
             '''
         self.discount_factor = discount_factor
+        self.t_selection_method = t_selection_metod
         self.learning_rate = learning_rate
         self.ratio_explotacion = ratio_explotacion
         self.action_space = list(range(len(I[0])))
@@ -64,17 +67,10 @@ class Agent:
                     if(self._policy_table[j][i] != 0):
                        if i not in t_in_conf:
                             t_in_conf.append(i)
-                       #enabled_conflict = self.action_space * self._policy_table[j]
-                       #print("Conflicto habilitado")
-                       #print(enabled_conflict)
-                       #vector_choice = [i for i, x in enumerate(enabled_conflict) if x != 0]
-                       #idx_action = np.random.choice(vector_choice) 
-                       #idx_action = np.random.choice(np.flatnonzero(self._policy_table[j]))
+
                        self.state = j
                        found = 1
-                       #break
-
-        
+                       
         # Damos un paso aleatorio...
         # next_step = np.random.choice(list(game.action_space))
         # Ya tenemos esto con lo de arriba 
@@ -82,48 +78,51 @@ class Agent:
         # o tomaremos el mejor paso...
         
         if found and np.random.uniform() >= self.ratio_explotacion:
-            idx_conf_action = np.random.choice(t_in_conf)
-            max_prob_transition = 0
-            dict_probs = {}
-            conf_belongs = []
-            for i in range(len(self._conflicts)):
-                if idx_conf_action in self._conflicts["%d" %(i)]:
-                    conf_belongs.append(i)
-                    '''
-                    enabled_conflict = self.action_space * self._policy_table[i]
-                    #Prob gen
-                    for t in range(len(enabled_conflict)):
-                        if enabled_conflict[t] != 0 and (t not in dict_probs or enabled_conflict[t] > dict_probs[t]):
-                            dict_probs[t] = enabled_conflict[t]
-                    
-                    # Max Value
-                    max_prob = max(enabled_conflict)
-                    if(max_prob > max_prob_transition):
-                        max_prob_transition = max_prob
-                        vector_choice = [i for i, x in enumerate(enabled_conflict) if x == max_prob]
-                        idx_action = np.random.choice(vector_choice)
-                    '''
-            conf_choice = np.random.choice(conf_belongs)
-            enabled_conflict = self.action_space * self._policy_table[conf_choice]
-            for t in range(len(self._policy_table[conf_choice])):
-                if enabled_conflict[t] != 0:
-                    dict_probs[t] = self._policy_table[conf_choice][t]
-           # print(dict_probs)
-            sum = np.sum(list(dict_probs.values()))
-            for t in dict_probs.keys():
-                dict_probs[t] = dict_probs[t] / sum
-            idx_action = np.random.choice(list(dict_probs.keys()),p=list(dict_probs.values()))
 
-            # sum = np.sum(list(dict_probs.values()))
-            # for t in dict_probs.keys():
-            #     dict_probs[t] = dict_probs[t] / sum
-            # idx_action = np.random.choice(list(dict_probs.keys()),p=list(dict_probs.values()))
-            
+            if self.t_selection_method == 0:
+                idx_action = self.select_by_max_value(t_in_conf)
+            else:
+                idx_action = self.select_by_prob(t_in_conf)
         else:
             idx_action = np.random.choice(np.flatnonzero(self.action_space))
 
         return idx_action
         
+    def select_by_max_value(self, t_in_conf):
+        idx_conf_action = np.random.choice(t_in_conf)
+        max_prob_transition = 0
+        for i in range(len(self._conflicts)):
+            if idx_conf_action in self._conflicts["%d" %(i)]:
+                
+                # Max Value
+                enabled_conflict = self.action_space * self._policy_table[i]
+                max_prob = max(enabled_conflict)
+                if(max_prob > max_prob_transition):
+                    max_prob_transition = max_prob
+                    vector_choice = [i for i, x in enumerate(enabled_conflict) if x == max_prob]
+                    idx_action = np.random.choice(vector_choice)
+        return idx_action
+    
+    def select_by_prob(self,t_in_conf):
+        idx_conf_action = np.random.choice(t_in_conf)
+        dict_probs = {}
+        conf_belongs = []
+        for i in range(len(self._conflicts)):
+            if idx_conf_action in self._conflicts["%d" %(i)]:
+                conf_belongs.append(i)
+
+        # Probabilities        
+        conf_choice = np.random.choice(conf_belongs)
+        enabled_conflict = self.action_space * self._policy_table[conf_choice]
+        for t in range(len(self._policy_table[conf_choice])):
+            if enabled_conflict[t] != 0:
+                dict_probs[t] = self._policy_table[conf_choice][t]
+        sum = np.sum(list(dict_probs.values()))
+        for t in dict_probs.keys():
+            dict_probs[t] = dict_probs[t] / sum
+        idx_action = np.random.choice(list(dict_probs.keys()),p=list(dict_probs.values()))
+        return idx_action
+    
     # actualizamos las politicas con las recompensas obtenidas
     def update(self,old_state,action_taken,reward_action_taken):
 

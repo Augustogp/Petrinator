@@ -16,13 +16,21 @@ class Simple_Cost_Manager:
             self.patterns.append(re.compile(string))
 
     def updateCost(self,transition):
+        """[summary]
+
+        Args:
+            transition ([type]): [description]
+
+        Returns:
+            [type]: [description]
+        """        
         self.checkCounters()
         self.historic_costs.append(self.cost_vector[transition])
         reward = (self.cost_vector[transition] - self.mean_cost) / 100
         self.mean_cost = self.mean_cost + (self.cost_vector[transition] - self.mean_cost) / len(self.historic_costs)
         return reward
 
-    def checkCounters(self):
+    def checkCounters(self):        
         new_str = ""
         for pattern_idx in range(len(self.patterns)):
             match = self.patterns[pattern_idx].match(self.partial_inv)

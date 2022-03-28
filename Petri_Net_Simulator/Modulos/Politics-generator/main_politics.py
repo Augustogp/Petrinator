@@ -15,6 +15,8 @@ import time
 from simple_cost_manager import Simple_Cost_Manager
 from invariant_cost_manager import Invariant_Cost_Manager
 
+MAX_VALUE_SEL = 0
+PROBABILITIES_SEL = 1
 
 #socket
 host = "127.0.0.1"
@@ -97,7 +99,7 @@ def main():
     cost_manager = Invariant_Cost_Manager(num_transitions+1,tInvTraces)
     requirements = Requirements(len(tInvTraces))
     enviroment = Environment(matrix_i_minus,matrix_i_plus,matrix_inhibition,marking,cost_manager,use_w_not_inv=False)
-    agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.7,t_selection_metod=1)
+    agent = Agent(matrix_i_minus,enviroment,ratio_explotacion=0.7,t_selection_metod=PROBABILITIES_SEL)
     #agent.print_policy()
     print("Policies:")
     print(agent.get_policy())
@@ -118,7 +120,7 @@ def main():
     print("Expresiones regulares:")
     print(enviroment_supervisor.regex_list)
 
-    action.action(agent,enviroment,enviroment_supervisor,max_iterations=100000,rounds=8)
+    action.action(agent,enviroment,enviroment_supervisor,max_iterations=100000,rounds=5)
     print("Pesos transiciones al inicio")
     print(transitions_weight)
     print("Pesos transiciones al final")
@@ -137,7 +139,7 @@ def main():
     end_time = time.time()
     print("--- %s seconds ---" % (end_time - start_time))
     enviroment_supervisor.print_probability()
-    enviroment_supervisor.print_total_fire_proportions()
+    #enviroment_supervisor.print_total_fire_proportions()
     print("Disparos por invariante")
     print(cost_manager.inv_counters_acum)
     

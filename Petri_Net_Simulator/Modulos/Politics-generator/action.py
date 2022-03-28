@@ -37,12 +37,7 @@ def action(learner, enviroment, enviroment_supervisor, max_iterations = 3000, ro
         
         itera=0
         while (done != True) and (itera < max_iterations):
-            # if(itera < max_iterations/4):
-            #     learner.ratio_explotacion = 0.7
-            # elif(itera < max_iterations/2):
-            #     learner.ratio_explotacion = 0.5
-            # else:
-            #     learner.ratio_explotacion = 0.3
+            
             next_action = learner.get_next_step(enviroment)
             old_state = learner.get_state()
             reward = enviroment.fireNet(next_action)

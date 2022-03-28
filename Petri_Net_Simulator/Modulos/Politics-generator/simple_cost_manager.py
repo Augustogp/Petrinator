@@ -16,14 +16,7 @@ class Simple_Cost_Manager:
             self.patterns.append(re.compile(string))
 
     def updateCost(self,transition):
-        """[summary]
 
-        Args:
-            transition ([type]): [description]
-
-        Returns:
-            [type]: [description]
-        """        
         self.checkCounters()
         self.historic_costs.append(self.cost_vector[transition])
         reward = (self.cost_vector[transition] - self.mean_cost) / 100

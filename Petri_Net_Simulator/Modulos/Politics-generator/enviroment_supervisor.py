@@ -104,37 +104,14 @@ class Enviroment_Supervisor:
         counters_acum = [0] * len(self.regex_list)
         pond_vector_by_batch = self.get_pond_vector_by_batch()
         for n_batch in range(len(self.batches_dict)):
-            '''          
-            res = self.batches_dict[n_batch]
 
-            counters = [0] * len(self.regex_list)
-
-            while True:
-                nuevo_resultado = ""
-                for pattern_idx in range(len(self.patterns)):
-                    match = self.patterns[pattern_idx].match(res)
-                    if match:
-                        counters[pattern_idx] += 1 
-                        break
-                if not match:
-                    break
-                for group in match.groups():
-                    if group is not None: nuevo_resultado += group
-                res = nuevo_resultado
-            '''
         
             #print("Contadores batch %d" %(n_batch))
             #print(counters)
             porcentual_count = [x / sum(self.batches_dict[n_batch]) for x in self.batches_dict[n_batch]]
             if((self.n_batch_graph - len(self.batches_dict) + n_batch) >= 0):
                 counters_acum = np.add(counters_acum,porcentual_count)
-            #print("Resultados buscados")
-            #print(self._requirements.Inv_Politics)
-            #print("Contadores expresados en porcentaje")
-            #print(porcentual_count)
-            #print("Vector costos antes: ")
-            #print(self._enviroment.cost_vector)
-            #counters_vect[n_batch] = porcentual_count
+
             if(n_batch == self.num_batches - 1):
                 for i in range(len(self.batches_dict[n_batch])):
                     self._historic_counters[i].append(porcentual_count[i])

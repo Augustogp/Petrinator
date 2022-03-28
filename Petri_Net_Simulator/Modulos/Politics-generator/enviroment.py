@@ -33,10 +33,6 @@ class Environment:
         self.I_plus = np.array(I_plus)
         self.initial_marking = np.array(Marking)
 
-       # self.cost_vector = cost_vector
-       # self.mean_cost = 0
-       # self.historic_costs = []
-      #  self.beta = 0
 
         self.historic_fires = ""
 
@@ -180,39 +176,3 @@ class Environment:
     def get_policy_table(self):
         return self._policy_table
         
-    '''
-    def reset(self):
-        self.total_reward = 0
-        self.state = [0,0,0]
-        self.lives = self.max_life
-        self.score = 0
-        self.x = randint(int(self.width_px/2), self.width_px) 
-        self.y = randint(0, self.height_px-10)
-        return self.state
-
-    def step(self, action, animate=False):
-        self._apply_action(action, animate)
-        done = self.lives <=0 # final
-        reward = self.score
-        reward += self._step_penalization
-        self.total_reward += reward
-        return self.state, reward , done
-
-    def _apply_action(self, action, animate=False):
-        
-        if action == "Arriba":
-            self.player1 += abs(self.dy)
-        elif action == "Abajo":
-            self.player1 -= abs(self.dy)
-            
-        self.avanza_player()
-
-        self.avanza_frame()
-
-        if animate:
-            clear_output(wait=True);
-            fig = self.dibujar_frame()
-            plt.show()
-
-        self.state = (floor(self.player1/abs(self.dy))-2, floor(self.y/abs(self.dy))-2, floor(self.x/abs(self.dx))-2)
-    '''

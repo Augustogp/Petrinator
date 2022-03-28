@@ -14,9 +14,7 @@ class Agent:
         if policy is not None:
             self._policy_table = policy
         else:
-          #  position = list(game.positions_space.shape)
-          #  position.append(len(game.action_space))
-           # self._q_table = np.zeros(position)
+
             self._policy_table = []
             self._policy_table = enviroment.get_policy_table()
             self._conflicts = self.set_conflicts()
@@ -139,16 +137,8 @@ class Agent:
 
             aux_policy_values = self._policy_table[conflict].copy()
 
-            #idx_action_taken =list(self._policy_table[old_state]).index(action_taken)
-            #print("Probabilidades pre cambio")
-            #print(self._policy_table)
-            #print("Probabilidad actual: %f" %(actual_policy_value))
-
-        # actual_policy_values_options = self._policy_table[old_state]
-        # actual_policy_value = actual_policy_values_options[idx_action_taken]
             loss = - math.log(actual_policy_value) * reward_action_taken
-            #print("Reward: %f" %(reward_action_taken))
-            #print("Loss: %f" %(loss))
+
 
             new_policy_value = actual_policy_value - loss
             if(new_policy_value >= 1 or new_policy_value <= 0):

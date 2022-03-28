@@ -247,6 +247,11 @@ public class TraceAction2 extends AbstractAction
             t.start();
         }
 
+        public String getOsName() {
+            return System.getProperty("os.name");
+        }
+
+
         private void createSocket(){
             int port_server = 0;
             Socket sock_cli = null;
@@ -261,8 +266,12 @@ public class TraceAction2 extends AbstractAction
 
             System.out.println("Path del modulo es " + defaultModulesPath);
             String pathToPythonMain = defaultModulesPath + "\\main_politics.py";
+            String os_name = getOsName();
+            if (os_name.startsWith("Linux"))
+                pathToPythonMain = pathToPythonMain.replace("\\", "/");
             System.out.println("Path del python " + pathToPythonMain);
-            ProcessBuilder pb = new ProcessBuilder("python", pathToPythonMain, String.valueOf(port_server), generateJsonMatrixStructure(),sendTInvTraces());
+
+            ProcessBuilder pb = new ProcessBuilder("python3", pathToPythonMain, String.valueOf(port_server), generateJsonMatrixStructure(),sendTInvTraces());
             // System.out.println("python" + pathToPythonMain + String.valueOf(port_server) + SimulateAction.get_transitionBuffer() + generateJsonMatrixStructure());
             try {
                 pb.redirectInput(ProcessBuilder.Redirect.INHERIT);
@@ -287,6 +296,9 @@ public class TraceAction2 extends AbstractAction
             String json = generateJson(TInvTraces);
 
             System.out.println("String json Tiv " + json);
+            //return json;
+            if (getOsName().startsWith("Linux"))
+                return json;
             return json.replace("\"", "\\\"");
         }
 
@@ -308,6 +320,9 @@ public class TraceAction2 extends AbstractAction
             matrices.put("Marcado", root.getDocument().getPetriNet().getInitialMarking().getMarkingAsArray()[Marking.CURRENT]);
 
             String json = gson.toJson(matrices);
+            if (getOsName().startsWith("Linux")){
+                return json;
+            }
             return json.replace("\"", "\\\"");
         }
     }
